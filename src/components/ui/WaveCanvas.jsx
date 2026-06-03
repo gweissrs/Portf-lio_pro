@@ -4,24 +4,21 @@ const PARTICLE_COUNT = 80;
 const MOUSE_RADIUS = 120;
 const MOUSE_FORCE = 1.5;
 
-function randomBetween(a, b) {
+function rnd(a, b) {
   return a + Math.random() * (b - a);
 }
 
-function initParticles(w, h) {
-  return Array.from({ length: PARTICLE_COUNT }, () => ({
-    x: randomBetween(0, w),
-    y: randomBetween(0, h),
-    vx: randomBetween(-0.2, 0.2),
-    vy: randomBetween(-0.25, -0.05),
-    r: randomBetween(1, 3),
-    baseAlpha: randomBetween(0.15, 1),
-    color: [
-      'rgba(255,255,255,',
-      'rgba(160,230,255,',
-      'rgba(100,180,255,',
-    ][Math.floor(Math.random() * 3)],
-  }));
+function makeParticle(w, h) {
+  return {
+    x: rnd(0, w),
+    y: rnd(0, h),
+    vx: rnd(-0.2, 0.2),
+    vy: rnd(-0.25, -0.05),
+    r: rnd(1, 3),
+    baseAlpha: rnd(0.15, 1),
+    // RGB separado para montar rgba() corretamente
+    color: ['255,255,255', '160,230,255', '100,180,255'][Math.floor(Math.random() * 3)],
+  };
 }
 
 export function WaveCanvas({ mousePos }) {
@@ -35,68 +32,73 @@ export function WaveCanvas({ mousePos }) {
     let rafId;
     let t = 0;
 
-    function resize() {
+    function setup(w, h) {
+      if (!w || !h) return;
       const dpr = window.devicePixelRatio || 1;
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      // setTransform evita acúmulo de escala em cada resize
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      if (!stateRef.current) {
-        stateRef.current = { particles: initParticles(w, h), w, h };
+      if (!stateRef.current || stateRef.current.w === 0) {
+        stateRef.current = {
+          particles: Array.from({ length: PARTICLE_COUNT }, () => makeParticle(w, h)),
+          w,
+          h,
+        };
       } else {
         stateRef.current.w = w;
         stateRef.current.h = h;
       }
     }
 
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    resize();
+    // Observar o PAI (hero section) que tem dimensões reais
+    const parent = canvas.parentElement;
+    const ro = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      if (width > 0 && height > 0) setup(width, height);
+    });
+    ro.observe(parent || canvas);
+
+    // Fallback imediato usando o pai — mais confiável que canvas.offsetWidth
+    const w0 = parent?.offsetWidth || window.innerWidth;
+    const h0 = parent?.offsetHeight || window.innerHeight;
+    setup(w0, h0);
+
+    // ─── Ondas ───────────────────────────────────────────────
+    const WAVES = [
+      { speed: 0.40, amp: 28, yOff: 0.72, r: 99,  g: 102, b: 241, alpha: 0.18, lw: 1   },
+      { speed: 0.60, amp: 22, yOff: 0.78, r: 59,  g: 130, b: 246, alpha: 0.45, lw: 1.5 },
+      { speed: 0.90, amp: 16, yOff: 0.84, r: 6,   g: 182, b: 212, alpha: 0.90, lw: 2   },
+    ];
 
     function drawWaves(w, h) {
-      const waveConfigs = [
-        // fundo — mais fosca
-        { speed: 0.4, amp: 28, yOff: 0.72, color: '#6366F1', alpha: 0.18, lw: 1 },
-        // meio
-        { speed: 0.6, amp: 22, yOff: 0.78, color: '#3B82F6', alpha: 0.45, lw: 1.5 },
-        // frente — mais nítida
-        { speed: 0.9, amp: 16, yOff: 0.84, color: '#06B6D4', alpha: 0.9, lw: 2 },
-      ];
+      WAVES.forEach(({ speed, amp, yOff, r, g, b, alpha, lw }) => {
+        const baseY = h * yOff;
 
-      waveConfigs.forEach(({ speed, amp, yOff, color, alpha, lw }) => {
         ctx.beginPath();
         ctx.lineWidth = lw;
-        ctx.strokeStyle = color;
-        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
         ctx.shadowBlur = alpha > 0.5 ? 20 : 6;
-        ctx.shadowColor = '#06B6D4';
-
-        const baseY = h * yOff;
-        const step = 6;
+        ctx.shadowColor = `rgba(${r},${g},${b},1)`;
+        ctx.globalAlpha = 1;
 
         ctx.moveTo(0, baseY + Math.sin(t * speed) * amp);
-        for (let x = 0; x <= w; x += step) {
+        for (let x = 0; x <= w; x += 5) {
           const y =
             baseY +
             Math.sin((x / w) * Math.PI * 3 + t * speed) * amp +
-            Math.sin((x / w) * Math.PI * 1.5 + t * speed * 0.7) * (amp * 0.4);
+            Math.sin((x / w) * Math.PI * 1.5 + t * speed * 0.7) * amp * 0.4;
           ctx.lineTo(x, y);
         }
         ctx.stroke();
 
-        // fill abaixo da onda
+        // Fill abaixo da onda
         ctx.lineTo(w, h);
         ctx.lineTo(0, h);
         ctx.closePath();
-        const grad = ctx.createLinearGradient(0, baseY - amp, 0, h);
-        grad.addColorStop(0, color.replace(')', ', 0.04)').replace('#', 'rgba(').replace('rgba(', 'rgba('));
-        grad.addColorStop(1, 'transparent');
-
-        // simples fill com alpha baixo
-        ctx.globalAlpha = alpha * 0.12;
-        ctx.fillStyle = color;
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha * 0.1})`;
+        ctx.shadowBlur = 0;
         ctx.fill();
       });
 
@@ -104,13 +106,16 @@ export function WaveCanvas({ mousePos }) {
       ctx.globalAlpha = 1;
     }
 
+    // ─── Partículas ──────────────────────────────────────────
     function drawParticles(w, h) {
-      const { particles } = stateRef.current;
-      const mx = mousePos.current.x;
-      const my = mousePos.current.y;
+      const particles = stateRef.current?.particles;
+      if (!particles) return;
+
+      const mx = mousePos?.current?.x ?? -9999;
+      const my = mousePos?.current?.y ?? -9999;
 
       particles.forEach((p) => {
-        // repulsão do mouse
+        // Repulsão do mouse
         const dx = p.x - mx;
         const dy = p.y - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -120,25 +125,24 @@ export function WaveCanvas({ mousePos }) {
           p.y += (dy / dist) * force;
         }
 
-        // movimento natural
         p.x += p.vx;
         p.y += p.vy;
 
-        // wrap around
+        // Wrap around
         if (p.x < -4) p.x = w + 4;
         if (p.x > w + 4) p.x = -4;
         if (p.y < -4) p.y = h + 4;
         if (p.y > h + 4) p.y = -4;
 
-        // depth: partículas altas na tela são "distantes" → mais transparentes
-        const depthFactor = p.y / h; // 0 = topo (distante), 1 = base (próxima)
-        const alpha = p.baseAlpha * (0.15 + depthFactor * 0.85);
-        const glow = depthFactor > 0.6 ? 4 : 0;
+        // Depth-of-field: y mais alto = mais perto = mais opaco
+        const depth = p.y / h;
+        const alpha = p.baseAlpha * (0.12 + depth * 0.88);
+        const radius = Math.max(0.5, p.r * (0.5 + depth * 0.5));
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * (0.5 + depthFactor * 0.5), 0, Math.PI * 2);
-        ctx.fillStyle = `${p.color}${alpha})`;
-        ctx.shadowBlur = glow;
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color},${alpha})`;
+        ctx.shadowBlur = depth > 0.6 ? 4 : 0;
         ctx.shadowColor = '#06B6D4';
         ctx.fill();
       });
@@ -146,9 +150,14 @@ export function WaveCanvas({ mousePos }) {
       ctx.shadowBlur = 0;
     }
 
+    // ─── Loop principal ──────────────────────────────────────
     function loop() {
-      if (!stateRef.current) { rafId = requestAnimationFrame(loop); return; }
-      const { w, h } = stateRef.current;
+      const state = stateRef.current;
+      if (!state || state.w === 0) {
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
+      const { w, h } = state;
 
       ctx.clearRect(0, 0, w, h);
       t += 0.012;
