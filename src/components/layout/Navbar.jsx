@@ -14,7 +14,7 @@ const NAV_LINKS = [
 
 const SECTION_IDS = NAV_LINKS.map((l) => l.id);
 
-export function Navbar() {
+export function Navbar({ isBooting = false }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const activeId = useScrollSpy(SECTION_IDS);
@@ -30,7 +30,13 @@ export function Navbar() {
   return (
     <header className={`${styles.header} ${scrolled ? styles.solid : ''}`} role="banner">
       <nav className={styles.nav} aria-label="Navegação principal">
-        <a href="#hero" className={styles.logo} aria-label="Ir para o início">
+        <a
+          href="#hero"
+          className={styles.logo}
+          data-logo
+          aria-label="Ir para o início"
+          style={{ opacity: isBooting ? 0 : 1, transition: 'opacity 0.3s' }}
+        >
           {personal.nome}
         </a>
 

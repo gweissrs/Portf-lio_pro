@@ -5,7 +5,7 @@ import { BootSequence } from '../components/ui/BootSequence';
 import { Button } from '../components/ui/Button';
 import styles from './Hero.module.css';
 
-export function Hero() {
+export function Hero({ onBootComplete }) {
   const [bootDone, setBootDone] = useState(false);
 
   const sectionRef  = useRef(null);
@@ -65,7 +65,12 @@ export function Hero() {
 
   return (
     <>
-      {!bootDone && <BootSequence onComplete={() => setBootDone(true)} />}
+      {!bootDone && (
+        <BootSequence onComplete={() => {
+          setBootDone(true);
+          onBootComplete?.();
+        }} />
+      )}
 
       <section ref={sectionRef} id="hero" className={styles.hero} aria-label="Início">
 
