@@ -9,19 +9,6 @@
   overflow: hidden;
 }
 
-/* Grid decorativo ciano sutil */
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
-  background-size: 64px 64px;
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* Grain/noise sobre o fundo inteiro — filme analógico sutil */
 .hero::before {
   content: '';
