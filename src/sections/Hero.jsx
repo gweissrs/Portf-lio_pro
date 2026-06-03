@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
-import * as THREE from 'three';
-import WAVES from 'vanta/dist/vanta.waves.min';
+import { HolographicLine } from '../components/ui/HolographicLine';
 import { BootSequence } from '../components/ui/BootSequence';
 import { Button } from '../components/ui/Button';
 import styles from './Hero.module.css';
@@ -9,43 +8,23 @@ import styles from './Hero.module.css';
 export function Hero() {
   const [bootDone, setBootDone] = useState(false);
 
-  const sectionRef   = useRef(null);
-  const vantaRef     = useRef(null);
-  const vantaEffect  = useRef(null);
-  const badgeRef     = useRef(null);
-  const nameRef      = useRef(null);
-  const jobTitleRef  = useRef(null);
-  const locationRef  = useRef(null);
-  const phraseRef    = useRef(null);
-  const ctasRef      = useRef(null);
-  const scrollRef    = useRef(null);
+  const sectionRef  = useRef(null);
+  const mousePos    = useRef(null);
+  const badgeRef    = useRef(null);
+  const nameRef     = useRef(null);
+  const jobTitleRef = useRef(null);
+  const locationRef = useRef(null);
+  const phraseRef   = useRef(null);
+  const ctasRef     = useRef(null);
+  const scrollRef   = useRef(null);
 
-  // Vanta WAVES — inicializa uma vez, destrói no unmount
+  // Mouse tracking para reatividade da linha holográfica
   useEffect(() => {
-    if (!vantaEffect.current && vantaRef.current) {
-      vantaEffect.current = WAVES({
-        el: vantaRef.current,
-        THREE,
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
-        color: 0x0a0a1a,
-        shininess: 35.00,
-        waveHeight: 18.00,
-        waveSpeed: 0.60,
-        zoom: 0.85,
-      });
-    }
-    return () => {
-      if (vantaEffect.current) {
-        vantaEffect.current.destroy();
-        vantaEffect.current = null;
-      }
+    const handler = (e) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
     };
+    window.addEventListener('mousemove', handler);
+    return () => window.removeEventListener('mousemove', handler);
   }, []);
 
   // Animações de entrada GSAP — disparam após BootSequence terminar
@@ -65,14 +44,14 @@ export function Hero() {
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-      tl.to(badgeRef.current,   { opacity: 1, y: 0, duration: 0.6 })
-        .to(words,              { yPercent: 0, duration: 0.8, stagger: 0.08 }, '-=0.2')
-        .to(jobTitleRef.current,{ opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
-        .to(locationRef.current,{ opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
-        .to(phraseRef.current,  { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
-        .to(ctasRef.current,    { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
-        .to(scrollRef.current,  { opacity: 0.5, y: 0, duration: 0.6 }, '-=0.2')
-        .to(scrollRef.current,  {
+      tl.to(badgeRef.current,    { opacity: 1, y: 0, duration: 0.6 })
+        .to(words,               { yPercent: 0, duration: 0.8, stagger: 0.08 }, '-=0.2')
+        .to(jobTitleRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .to(locationRef.current, { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .to(phraseRef.current,   { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .to(ctasRef.current,     { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
+        .to(scrollRef.current,   { opacity: 0.5, y: 0, duration: 0.6 }, '-=0.2')
+        .to(scrollRef.current,   {
           y: 7,
           repeat: -1,
           yoyo: true,
@@ -90,14 +69,9 @@ export function Hero() {
 
       <section ref={sectionRef} id="hero" className={styles.hero} aria-label="Início">
 
-        {/* Vanta WAVES — fundo animado WebGL */}
-        <div
-          ref={vantaRef}
-          style={{ position: 'absolute', inset: 0, zIndex: 0 }}
-          aria-hidden="true"
-        />
+        <HolographicLine mousePos={mousePos} />
 
-        {/* Grain filmístico sobre o Vanta */}
+        {/* Grain filmístico */}
         <div className={styles.grain} aria-hidden="true" />
 
         <div className={styles.content}>
