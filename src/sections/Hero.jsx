@@ -23,8 +23,8 @@ const fadeScale = (delay) => ({
 export function Hero() {
   return (
     <section id="hero" className={styles.hero} aria-label="Início">
-      <div className={styles.bgGrid} aria-hidden="true" />
-      <div className={styles.bgGlow} aria-hidden="true" />
+      <div className={styles.bgGlowLeft} aria-hidden="true" />
+      <div className={styles.bgGlowRight} aria-hidden="true" />
 
       <div className={styles.container}>
         {/* Lado esquerdo: conteúdo textual */}
