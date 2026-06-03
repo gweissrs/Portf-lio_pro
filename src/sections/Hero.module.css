@@ -9,96 +9,27 @@
   overflow: hidden;
 }
 
-/* Grain/noise sobre o fundo inteiro — filme analógico sutil */
-.hero::before {
-  content: '';
+/* Grain filmístico — atrás do conteúdo, na frente do canvas */
+.grain {
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)'/%3E%3C/svg%3E");
   background-size: 220px 220px;
   opacity: 0.028;
   pointer-events: none;
-  z-index: 0;
-}
-
-/* Orbe ciano principal — flutua no canto superior esquerdo */
-.bgGlowLeft {
-  position: absolute;
-  top: -100px;
-  left: -80px;
-  width: 760px;
-  height: 760px;
-  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.11) 0%, rgba(6, 182, 212, 0.04) 40%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-  animation: floatA 24s ease-in-out infinite;
-}
-
-/* Orbe secundário — flutua no lado direito */
-.bgGlowRight {
-  position: absolute;
-  top: calc(50% - 260px);
-  right: -60px;
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.07) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-  animation: floatB 30s ease-in-out infinite;
-}
-
-/* Orbe terciário — flutua livre no centro-baixo */
-.bgGlowCenter {
-  position: absolute;
-  bottom: 5%;
-  left: 28%;
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.05) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-  animation: floatC 20s ease-in-out infinite;
-}
-
-@keyframes floatA {
-  0%   { transform: translate(0px, 0px); }
-  20%  { transform: translate(70px, 50px); }
-  45%  { transform: translate(30px, 100px); }
-  70%  { transform: translate(-50px, 60px); }
-  100% { transform: translate(0px, 0px); }
-}
-
-@keyframes floatB {
-  0%   { transform: translate(0px, 0px); }
-  30%  { transform: translate(-70px, 90px); }
-  60%  { transform: translate(50px, -60px); }
-  100% { transform: translate(0px, 0px); }
-}
-
-@keyframes floatC {
-  0%   { transform: translate(0px, 0px); }
-  50%  { transform: translate(-110px, -90px); }
-  100% { transform: translate(0px, 0px); }
-}
-
-/* Container principal — dois lados */
-.container {
-  position: relative;
   z-index: 1;
-  max-width: var(--max-width);
-  width: 100%;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: var(--spacing-2xl);
-  align-items: center;
 }
 
-/* --- Lado esquerdo --- */
+/* Conteúdo textual centralizado */
 .content {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  max-width: var(--max-width);
+  width: 100%;
+  text-align: center;
 }
 
 /* Badge de disponibilidade */
@@ -138,7 +69,7 @@
   }
 }
 
-/* Nome — linha única em desktop */
+/* Nome — reveal por palavra via GSAP */
 .name {
   font-family: var(--font-display);
   font-size: clamp(2.25rem, 4vw, 4rem);
@@ -148,6 +79,19 @@
   white-space: nowrap;
   color: var(--color-text-primary);
   margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Container do reveal — esconde overflow para o slide-up funcionar */
+.wordWrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+/* Palavra animada por GSAP */
+.word {
+  display: inline-block;
 }
 
 /* Título da profissão */
@@ -158,13 +102,15 @@
   color: var(--color-accent);
   letter-spacing: 0.01em;
   margin-bottom: 0.35rem;
+  text-align: center;
 }
 
-/* Localização / subtítulo */
+/* Localização */
 .location {
   font-size: 0.92rem;
   color: var(--color-text-secondary);
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 /* Frase de posicionamento */
@@ -172,8 +118,9 @@
   font-size: clamp(1rem, 1.6vw, 1.1rem);
   color: var(--color-text-secondary);
   line-height: 1.65;
-  max-width: 420px;
+  max-width: 560px;
   margin-bottom: 2.25rem;
+  text-align: center;
 }
 
 /* Botões CTA */
@@ -181,113 +128,18 @@
   display: flex;
   gap: 0.875rem;
   flex-wrap: wrap;
-}
-
-/* --- Lado direito: visual decorativo --- */
-.visual {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
   justify-content: center;
 }
 
-.visualInner {
-  position: relative;
-  width: 380px;
-  height: 380px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Anéis orbitais */
-.ring {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.ring1 {
-  width: 252px;
-  height: 252px;
-  border: 1px solid rgba(6, 182, 212, 0.2);
-  animation: orbit 20s linear infinite;
-}
-
-.ring2 {
-  width: 320px;
-  height: 320px;
-  border: 1px solid rgba(6, 182, 212, 0.2);
-  animation: orbit 30s linear infinite reverse;
-}
-
-.ring3 {
-  width: 380px;
-  height: 380px;
-  border: 1px solid rgba(6, 182, 212, 0.08);
-  animation: orbit 48s linear infinite;
-}
-
-@keyframes orbit {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Círculo principal com glow */
-.circle {
-  position: relative;
-  width: 210px;
-  height: 210px;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, #06b6d4 0%, #0891b2 45%, #0a0a0a 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    0 0 90px rgba(6, 182, 212, 0.18),
-    0 0 180px rgba(6, 182, 212, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 0 50px rgba(0, 0, 0, 0.45);
-  overflow: hidden;
-  z-index: 1;
-}
-
-/* Efeito grain sobre o círculo GW */
-.grain {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  opacity: 0.055;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: cover;
-}
-
-/* Iniciais GW */
-.initials {
-  font-family: var(--font-display);
-  font-size: 4.5rem;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.95);
-  letter-spacing: -0.045em;
-  position: relative;
-  z-index: 1;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
-  user-select: none;
-}
-
-/* Indicador de scroll */
+/* Scroll indicator */
 .scrollIndicator {
   position: absolute;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1;
+  z-index: 2;
   color: var(--color-text-secondary);
-  opacity: 0.5;
+  opacity: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,36 +150,6 @@
   .hero {
     padding-top: calc(var(--navbar-height) + var(--spacing-lg));
     padding-bottom: var(--spacing-3xl);
-  }
-
-  .bgGlowLeft {
-    width: 420px;
-    height: 420px;
-    top: -60px;
-    left: -60px;
-  }
-
-  .bgGlowRight {
-    display: none;
-  }
-
-  .bgGlowCenter {
-    display: none;
-  }
-
-  .container {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: var(--spacing-xl);
-  }
-
-  .content {
-    align-items: center;
-    order: 2;
-  }
-
-  .visual {
-    order: 1;
   }
 
   .name {
@@ -341,34 +163,5 @@
 
   .ctas {
     justify-content: center;
-  }
-
-  .visualInner {
-    width: 280px;
-    height: 280px;
-  }
-
-  .ring1 {
-    width: 186px;
-    height: 186px;
-  }
-
-  .ring2 {
-    width: 236px;
-    height: 236px;
-  }
-
-  .ring3 {
-    width: 280px;
-    height: 280px;
-  }
-
-  .circle {
-    width: 155px;
-    height: 155px;
-  }
-
-  .initials {
-    font-size: 3.2rem;
   }
 }
