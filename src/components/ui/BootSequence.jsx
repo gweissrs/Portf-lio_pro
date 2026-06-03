@@ -4,6 +4,7 @@ import styles from './BootSequence.module.css';
 
 export function BootSequence({ onComplete }) {
   const overlayRef  = useRef(null);
+  const introRef    = useRef(null);
   const gwGroupRef  = useRef(null);
   const gRef        = useRef(null);
   const uRef        = useRef(null);
@@ -11,6 +12,7 @@ export function BootSequence({ onComplete }) {
   const eRef        = useRef(null);
 
   useEffect(() => {
+    const introEl = introRef.current;
     const gEl     = gRef.current;
     const wEl     = wRef.current;
     const uEl     = uRef.current;
@@ -18,7 +20,7 @@ export function BootSequence({ onComplete }) {
     const gwGroup = gwGroupRef.current;
     const overlay = overlayRef.current;
 
-    if (!gEl || !wEl || !gwGroup || !overlay) return;
+    if (!introEl || !gEl || !wEl || !gwGroup || !overlay) return;
 
     // Captura posições iniciais antes de qualquer transform
     const gRect0 = gEl.getBoundingClientRect();
@@ -26,9 +28,16 @@ export function BootSequence({ onComplete }) {
     const gap    = wRect0.left - gRect0.right;
     const moveX  = gap / 2 + 4;
 
+    gsap.set(introEl, { opacity: 0 });
     gsap.set([gEl, uEl, wEl, eEl], { opacity: 0, x: 0, y: 0 });
 
     const tl = gsap.timeline();
+
+    // Intro — texto de boas-vindas aparece
+    tl.to(introEl, { opacity: 1, duration: 0.8, ease: 'expo.out' });
+
+    // Intro some após 1.2s de pausa
+    tl.to(introEl, { opacity: 0, duration: 0.5, ease: 'expo.in' }, '+=1.2');
 
     // Fase 1 — Nome aparece
     tl.to([gEl, uEl, wEl, eEl], {
@@ -75,18 +84,14 @@ export function BootSequence({ onComplete }) {
       };
 
       if (logoRect && logoRect.width > 0) {
-        // Escala: proporcional ao tamanho do logo na Navbar
         const s  = logoRect.height / gCurrent.height;
-        // Transform-origin do grupo (centro do gwGroup)
         const ox = gwGroupRect.left + gwGroupRect.width  / 2;
         const oy = gwGroupRect.top  + gwGroupRect.height / 2;
-        // Delta para G pousar exatamente sobre o logo
         const dx = logoRect.left - ox - s * (gCurrent.left - ox);
         const dy = (logoRect.top + logoRect.height / 2) - oy
                    - s * (gCurrent.top + gCurrent.height / 2 - oy);
         doFly(dx, dy, s);
       } else {
-        // Fallback: canto superior esquerdo estimado
         doFly(
           -(gwGroupRect.left + gwGroupRect.width  / 2) + 50,
           -(gwGroupRect.top  + gwGroupRect.height / 2) + 28,
@@ -100,6 +105,9 @@ export function BootSequence({ onComplete }) {
 
   return (
     <div ref={overlayRef} className={styles.overlay}>
+      <p ref={introRef} className={styles.intro}>
+        Welcome to Guilherme Weiss&apos;s portfolio.
+      </p>
       <div className={styles.nameWrap}>
         <div ref={gwGroupRef} className={styles.gwGroup}>
           <span ref={gRef} className={styles.letter}>G</span>
