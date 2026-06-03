@@ -1,0 +1,11 @@
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
