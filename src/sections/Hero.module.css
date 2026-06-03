@@ -9,6 +9,19 @@
   overflow: hidden;
 }
 
+/* Grid decorativo ciano sutil */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* Grain/noise sobre o fundo inteiro — filme analógico sutil */
 .hero::before {
   content: '';
@@ -103,13 +116,14 @@
   }
 }
 
-/* Nome */
+/* Nome — linha única em desktop */
 .name {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 6.5vw, 5rem);
+  font-size: clamp(2.25rem, 4vw, 4rem);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 1.1;
   letter-spacing: -0.035em;
+  white-space: nowrap;
   color: var(--color-text-primary);
   margin-bottom: 1rem;
 }
@@ -174,25 +188,22 @@
 .ring1 {
   width: 252px;
   height: 252px;
-  border: 1px solid rgba(6, 182, 212, 0.12);
-  border-top-color: rgba(6, 182, 212, 0.6);
-  animation: orbit 13s linear infinite;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  animation: orbit 20s linear infinite;
 }
 
 .ring2 {
   width: 320px;
   height: 320px;
-  border: 1px solid rgba(6, 182, 212, 0.07);
-  border-right-color: rgba(6, 182, 212, 0.35);
-  animation: orbit 22s linear infinite reverse;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  animation: orbit 30s linear infinite reverse;
 }
 
 .ring3 {
   width: 380px;
   height: 380px;
-  border: 1px solid rgba(6, 182, 212, 0.04);
-  border-bottom-color: rgba(6, 182, 212, 0.2);
-  animation: orbit 38s linear infinite;
+  border: 1px solid rgba(6, 182, 212, 0.08);
+  animation: orbit 48s linear infinite;
 }
 
 @keyframes orbit {
@@ -210,15 +221,15 @@
   width: 210px;
   height: 210px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 32%, #0e7490, #06b6d4 45%, #083344);
+  background: radial-gradient(circle at center, #06b6d4 0%, #0891b2 45%, #0a0a0a 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow:
-    0 0 55px rgba(6, 182, 212, 0.3),
-    0 0 110px rgba(6, 182, 212, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 0 40px rgba(0, 0, 0, 0.28);
+    0 0 90px rgba(6, 182, 212, 0.18),
+    0 0 180px rgba(6, 182, 212, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 50px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   z-index: 1;
 }
@@ -291,6 +302,11 @@
 
   .visual {
     order: 1;
+  }
+
+  .name {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+    white-space: normal;
   }
 
   .phrase {

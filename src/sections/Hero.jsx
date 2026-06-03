@@ -35,9 +35,7 @@ export function Hero() {
           </motion.div>
 
           <motion.h1 className={styles.name} {...fadeUp(0.3)}>
-            Guilherme
-            <br />
-            Weiss
+            Guilherme Weiss
           </motion.h1>
 
           <motion.p className={styles.jobTitle} {...fadeUp(0.5)}>
