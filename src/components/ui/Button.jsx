@@ -1,6 +1,6 @@
 import styles from './Button.module.css';
 
-export function Button({ variant = 'primary', href, onClick, children, target, rel }) {
+export function Button({ variant = 'primary', href, onClick, children, target, rel, ...rest }) {
   const className = `${styles.button} ${styles[variant]}`;
 
   if (href) {
@@ -10,6 +10,7 @@ export function Button({ variant = 'primary', href, onClick, children, target, r
         className={className}
         target={target}
         rel={target === '_blank' ? 'noopener noreferrer' : rel}
+        {...rest}
       >
         {children}
       </a>
@@ -17,7 +18,7 @@ export function Button({ variant = 'primary', href, onClick, children, target, r
   }
 
   return (
-    <button className={className} onClick={onClick}>
+    <button className={className} onClick={onClick} {...rest}>
       {children}
     </button>
   );

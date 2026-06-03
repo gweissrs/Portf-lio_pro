@@ -1,11 +1,302 @@
 .hero {
+  position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--navbar-height) + var(--spacing-xl)) var(--spacing-lg) var(--spacing-3xl);
+  overflow: hidden;
+}
+
+/* Grade decorativa de fundo */
+.bgGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30, 41, 59, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+}
+
+/* Glow ciano sutil no canto superior esquerdo */
+.bgGlow {
+  position: absolute;
+  top: -180px;
+  left: -120px;
+  width: 680px;
+  height: 680px;
+  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Container principal — dois lados */
+.container {
+  position: relative;
+  max-width: var(--max-width);
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--spacing-2xl);
+  align-items: center;
+}
+
+/* --- Lado esquerdo --- */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Badge de disponibilidade */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: rgba(6, 182, 212, 0.07);
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+  width: fit-content;
+}
+
+/* Dot verde pulsante */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+  animation: dotPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  55% {
+    opacity: 0.85;
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+}
+
+/* Nome */
+.name {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6.5vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+
+/* Título da profissão */
+.jobTitle {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.01em;
+  margin-bottom: 0.35rem;
+}
+
+/* Localização / subtítulo */
+.location {
+  font-size: 0.92rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+/* Frase de posicionamento */
+.phrase {
+  font-size: clamp(1rem, 1.6vw, 1.1rem);
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  max-width: 420px;
+  margin-bottom: 2.25rem;
+}
+
+/* Botões CTA */
+.ctas {
+  display: flex;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+/* --- Lado direito: visual decorativo --- */
+.visual {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.placeholder {
+.visualInner {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Anéis orbitais */
+.ring {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.ring1 {
+  width: 252px;
+  height: 252px;
+  border: 1px solid rgba(6, 182, 212, 0.12);
+  border-top-color: rgba(6, 182, 212, 0.6);
+  animation: orbit 13s linear infinite;
+}
+
+.ring2 {
+  width: 320px;
+  height: 320px;
+  border: 1px solid rgba(6, 182, 212, 0.07);
+  border-right-color: rgba(6, 182, 212, 0.35);
+  animation: orbit 22s linear infinite reverse;
+}
+
+.ring3 {
+  width: 380px;
+  height: 380px;
+  border: 1px solid rgba(6, 182, 212, 0.04);
+  border-bottom-color: rgba(6, 182, 212, 0.2);
+  animation: orbit 38s linear infinite;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Círculo principal com glow */
+.circle {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #0e7490, #06b6d4 45%, #083344);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 55px rgba(6, 182, 212, 0.3),
+    0 0 110px rgba(6, 182, 212, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 40px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Efeito grain/ruído sobre o círculo */
+.grain {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: cover;
+}
+
+/* Iniciais GW */
+.initials {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: -0.045em;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+  user-select: none;
+}
+
+/* Indicador de scroll */
+.scrollIndicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Mobile (≤ 768px) --- */
+@media (max-width: 768px) {
+  .hero {
+    padding-top: calc(var(--navbar-height) + var(--spacing-lg));
+    padding-bottom: var(--spacing-3xl);
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: var(--spacing-xl);
+  }
+
+  .content {
+    align-items: center;
+    order: 2;
+  }
+
+  .visual {
+    order: 1;
+  }
+
+  .phrase {
+    max-width: 100%;
+  }
+
+  .ctas {
+    justify-content: center;
+  }
+
+  .visualInner {
+    width: 280px;
+    height: 280px;
+  }
+
+  .ring1 {
+    width: 186px;
+    height: 186px;
+  }
+
+  .ring2 {
+    width: 236px;
+    height: 236px;
+  }
+
+  .ring3 {
+    width: 280px;
+    height: 280px;
+  }
+
+  .circle {
+    width: 155px;
+    height: 155px;
+  }
+
+  .initials {
+    font-size: 3.2rem;
+  }
 }
