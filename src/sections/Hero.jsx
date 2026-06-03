@@ -25,6 +25,7 @@ export function Hero() {
     <section id="hero" className={styles.hero} aria-label="Início">
       <div className={styles.bgGlowLeft} aria-hidden="true" />
       <div className={styles.bgGlowRight} aria-hidden="true" />
+      <div className={styles.bgGlowCenter} aria-hidden="true" />
 
       <div className={styles.container}>
         {/* Lado esquerdo: conteúdo textual */}

@@ -21,7 +21,7 @@
   z-index: 0;
 }
 
-/* Glow ciano principal — lado esquerdo onde está o texto */
+/* Orbe ciano principal — flutua no canto superior esquerdo */
 .bgGlowLeft {
   position: absolute;
   top: -100px;
@@ -31,19 +31,54 @@
   background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.11) 0%, rgba(6, 182, 212, 0.04) 40%, transparent 70%);
   pointer-events: none;
   z-index: 0;
+  animation: floatA 24s ease-in-out infinite;
 }
 
-/* Glow secundário mais suave — lado direito, ao redor do círculo GW */
+/* Orbe secundário — flutua no lado direito */
 .bgGlowRight {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 260px);
   right: -60px;
-  transform: translateY(-50%);
   width: 520px;
   height: 520px;
-  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.06) 0%, transparent 65%);
+  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.07) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
+  animation: floatB 30s ease-in-out infinite;
+}
+
+/* Orbe terciário — flutua livre no centro-baixo */
+.bgGlowCenter {
+  position: absolute;
+  bottom: 5%;
+  left: 28%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.05) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatC 20s ease-in-out infinite;
+}
+
+@keyframes floatA {
+  0%   { transform: translate(0px, 0px); }
+  20%  { transform: translate(70px, 50px); }
+  45%  { transform: translate(30px, 100px); }
+  70%  { transform: translate(-50px, 60px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+@keyframes floatB {
+  0%   { transform: translate(0px, 0px); }
+  30%  { transform: translate(-70px, 90px); }
+  60%  { transform: translate(50px, -60px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+@keyframes floatC {
+  0%   { transform: translate(0px, 0px); }
+  50%  { transform: translate(-110px, -90px); }
+  100% { transform: translate(0px, 0px); }
 }
 
 /* Container principal — dois lados */
@@ -273,6 +308,10 @@
   }
 
   .bgGlowRight {
+    display: none;
+  }
+
+  .bgGlowCenter {
     display: none;
   }
 
