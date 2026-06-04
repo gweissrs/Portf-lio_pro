@@ -29,7 +29,7 @@ export function BootSequence({ onComplete }) {
 
     // Estado inicial
     gsap.set(phraseEl, { opacity: 0 });
-    gsap.set(glowEl,   { opacity: 0, scale: 0 });
+    gsap.set(glowEl,   { xPercent: -50, yPercent: -50, opacity: 0, scale: 0 });
 
     const tl = gsap.timeline();
 
@@ -44,40 +44,58 @@ export function BootSequence({ onComplete }) {
       ease: 'expo.in',
     }, '+=0.8');
 
-    // FASE 3 — G e W se aproximam
+    // FASE 3 — G e W centralizam na tela sem gap entre eles
     tl.add(() => {
-      const gRect   = gEl.getBoundingClientRect();
-      const wRect   = wEl.getBoundingClientRect();
-      const centerX = (gRect.right + wRect.left) / 2;
-      const gMoveX  = centerX - gRect.right;
-      const wMoveX  = wRect.left - centerX;
+      const gRect        = gRef.current.getBoundingClientRect();
+      const wRect        = wRef.current.getBoundingClientRect();
+      const screenCenterX = window.innerWidth / 2;
+      const gwTotalWidth  = gRect.width + wRect.width;
+      const gTargetLeft   = screenCenterX - gwTotalWidth / 2;
+      const wTargetLeft   = gTargetLeft + gRect.width;
 
-      gsap.to(gEl, { x: gMoveX,  duration: 0.5, ease: 'expo.inOut' });
-      gsap.to(wEl, { x: -wMoveX, duration: 0.5, ease: 'expo.inOut' });
+      gsap.to(gRef.current, { x: `+=${gTargetLeft - gRect.left}`, duration: 0.5, ease: 'expo.inOut' });
+      gsap.to(wRef.current, { x: `+=${wTargetLeft - wRect.left}`, duration: 0.5, ease: 'expo.inOut' });
     });
 
     // FASE 4 — Glow burst (0.5s após fase 3 iniciar = quando ela termina)
     tl.add(() => {
+      // Posição exata entre G e W após o movimento da FASE 3
+      const gRect       = gRef.current.getBoundingClientRect();
+      const wRect       = wRef.current.getBoundingClientRect();
+      const gwGroupRect = gwGroupRef.current.getBoundingClientRect();
+
+      const centerBetweenX = (gRect.left + wRect.right) / 2;
+      const centerBetweenY = (gRect.top + gRect.bottom) / 2;
+
+      gsap.set(glowRef.current, {
+        left:     centerBetweenX - gwGroupRect.left,
+        top:      centerBetweenY - gwGroupRect.top,
+        xPercent: -50,
+        yPercent: -50,
+        opacity:  0,
+        scale:    0,
+      });
+
       // Flash de brilho no overlay
-      gsap.fromTo(overlay,
+      gsap.fromTo(overlayRef.current,
         { filter: 'brightness(1)' },
         { filter: 'brightness(1.8)', duration: 0.1, ease: 'power3.out', yoyo: true, repeat: 1 },
       );
 
-      // Orbe de luz ciano expande e some
-      gsap.to(glowEl, {
+      // Orbe expande e some
+      gsap.to(glowRef.current, {
         opacity: 1, scale: 1, duration: 0.15, ease: 'power3.out',
         onComplete: () => {
-          gsap.to(glowEl, { opacity: 0, scale: 3, duration: 0.4, ease: 'power2.out' });
+          gsap.to(glowRef.current, { opacity: 0, scale: 3.5, duration: 0.5, ease: 'power2.out' });
         },
       });
 
-      // Text shadow pulsante no GW
-      gsap.to([gEl, wEl], {
+      // Text shadow no GW
+      gsap.to([gRef.current, wRef.current], {
         textShadow: '0 0 20px #06B6D4, 0 0 40px #06B6D4',
         duration: 0.2, ease: 'power3.out',
         onComplete: () => {
-          gsap.to([gEl, wEl], {
+          gsap.to([gRef.current, wRef.current], {
             textShadow: '0 0 8px rgba(6,182,212,0.15)',
             duration: 0.5, ease: 'power2.out',
           });
@@ -87,53 +105,104 @@ export function BootSequence({ onComplete }) {
 
     // FASE 5 — GW voa para o logo da Navbar (0.3s após glow burst)
     tl.add(() => {
-      const gCurrent    = gEl.getBoundingClientRect();
-      const gwGroupRect = gwGroup.getBoundingClientRect();
-      const logoEl      = document.querySelector('[data-logo]');
-      const logoRect    = logoEl?.getBoundingClientRect();
+      const logoEl  = document.querySelector('[data-logo]');
+      const logoRect = logoEl?.getBoundingClientRect();
+      if (!logoRect || logoRect.width === 0) return;
 
-      const doFly = (dx, dy, s) => {
-        gsap.to(gwGroup, { x: dx, y: dy, scale: s, duration: 0.7, ease: 'expo.inOut' });
-      };
+      // Posição visual real de G e W após transforms individuais da FASE 3
+      const gRect = gRef.current.getBoundingClientRect();
+      const wRect = wRef.current.getBoundingClientRect();
 
-      if (logoRect && logoRect.width > 0) {
-        // Escala baseada no tamanho real do logo vs letra
-        const s  = logoRect.height / gCurrent.height;
-        // Transform-origin = centro do gwGroup
-        const ox = gwGroupRect.left + gwGroupRect.width  / 2;
-        const oy = gwGroupRect.top  + gwGroupRect.height / 2;
-        // G deve pousar na posição exata do logo
-        const dx = logoRect.left - ox - s * (gCurrent.left - ox);
-        const dy = (logoRect.top + logoRect.height / 2) - oy
-                   - s * (gCurrent.top + gCurrent.height / 2 - oy);
-        doFly(dx, dy, s);
-      } else {
-        doFly(
-          -(gwGroupRect.left + gwGroupRect.width  / 2) + 50,
-          -(gwGroupRect.top  + gwGroupRect.height / 2) + 28,
-          0.2,
-        );
-      }
+      // Centro visual real do par GW na tela
+      const gwVisualWidth  = wRect.right - gRect.left;
+      const gwCenterX      = gRect.left  + gwVisualWidth  / 2;
+      const gwCenterY      = gRect.top   + gRect.height   / 2;
+
+      // Centro alvo do logo
+      const targetCenterX  = logoRect.left + logoRect.width  / 2;
+      const targetCenterY  = logoRect.top  + logoRect.height / 2;
+
+      // Centro do gwGroup (pivô de escala do GSAP)
+      const gwGroupRect    = gwGroupRef.current.getBoundingClientRect();
+      const gwGroupCenterX = gwGroupRect.left + gwGroupRect.width  / 2;
+      const gwGroupCenterY = gwGroupRect.top  + gwGroupRect.height / 2;
+
+      // Offset entre centro visual do GW e pivô do gwGroup
+      const offsetX = gwCenterX - gwGroupCenterX;
+      const offsetY = gwCenterY - gwGroupCenterY;
+
+      const scale  = logoRect.height / gRect.height;
+      const deltaX = targetCenterX - gwGroupCenterX - scale * offsetX;
+      const deltaY = targetCenterY - gwGroupCenterY - scale * offsetY;
+
+      gsap.to(gwGroupRef.current, {
+        x: deltaX,
+        y: deltaY,
+        scale,
+        duration: 0.7,
+        ease: 'expo.inOut',
+        transformOrigin: 'center center',
+      });
     }, '+=0.3');
 
-    // FASE 6 — overlay some (começa 0.2s após fase 5, termina junto com o voo)
-    tl.to(overlay, {
-      opacity: 0,
-      duration: 0.5,
-      delay: 0.2,
-      ease: 'power2.inOut',
-      onComplete: () => onComplete(),
-    });
+    // FASE 6 — span simples na posição do logo faz crossfade com logo real
+    tl.add(() => {
+      const logoEl   = document.querySelector('[data-logo]');
+      const logoRect = logoEl?.getBoundingClientRect();
+      if (!logoRect) return;
+
+      const logoComputedStyle = window.getComputedStyle(logoEl);
+      const clone = document.createElement('span');
+      clone.textContent = 'GW';
+      clone.style.cssText = `
+        position: fixed;
+        top: ${logoRect.top}px;
+        left: ${logoRect.left}px;
+        width: ${logoRect.width}px;
+        height: ${logoRect.height}px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-family: ${logoComputedStyle.fontFamily};
+        font-size: ${logoComputedStyle.fontSize};
+        font-weight: ${logoComputedStyle.fontWeight};
+        color: ${logoComputedStyle.color};
+        letter-spacing: ${logoComputedStyle.letterSpacing};
+        z-index: 10000;
+        pointer-events: none;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+      `;
+      document.body.appendChild(clone);
+
+      gsap.set(gwGroupRef.current, { opacity: 0 });
+
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.5,
+        delay: 0.1,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          onComplete();
+          gsap.to(clone, {
+            opacity: 0,
+            duration: 0.3,
+            delay: 0.3,
+            onComplete: () => clone.remove(),
+          });
+        },
+      });
+    }, '+=0.3');
 
     return () => tl.kill();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div ref={overlayRef} className={styles.overlay}>
-      {/* Orbe de glow centralizado — aparece no momento da junção */}
-      <div ref={glowRef} className={styles.glowBurst} aria-hidden="true" />
-
       <div ref={gwGroupRef} className={styles.gwGroup}>
+        {/* Orbe de glow — top/left 50% relativo ao gwGroup */}
+        <div ref={glowRef} className={styles.glowBurst} aria-hidden="true" />
         <p ref={phraseRef} className={styles.phrase}>
           {PHRASE.split('').map((char, i) => {
             if (i === G_IDX) {

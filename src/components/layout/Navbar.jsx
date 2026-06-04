@@ -28,16 +28,24 @@ export function Navbar({ isBooting = false }) {
   const handleLinkClick = () => setMenuOpen(false);
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.solid : ''}`} role="banner">
+    <header
+      className={`${styles.header} ${scrolled ? styles.solid : ''}`}
+      role="banner"
+      style={{
+        opacity: isBooting ? 0 : 1,
+        transition: 'opacity 0.6s ease',
+        pointerEvents: isBooting ? 'none' : 'auto',
+      }}
+    >
       <nav className={styles.nav} aria-label="Navegação principal">
         <a
           href="#hero"
           className={styles.logo}
           data-logo
           aria-label="Ir para o início"
-          style={{ opacity: isBooting ? 0 : 1, transition: 'opacity 0.3s' }}
+          style={{ opacity: isBooting ? 0 : 1, transition: 'opacity 0.4s ease' }}
         >
-          {personal.nome}
+          GW
         </a>
 
         <ul className={`${styles.links} ${menuOpen ? styles.open : ''}`} role="list">

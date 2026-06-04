@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(Remove-Item \"C:\\\\GW\\\\Projetos\\\\Portfólio PRO\\\\src\\\\components\\\\ui\\\\WavesBG.jsx\" -Force)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
