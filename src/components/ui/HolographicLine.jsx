@@ -14,21 +14,20 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
     const particles = Array.from({ length: 40 }, () => {
       const yOffset = (Math.random() - 0.5) * 50;
       return {
-        xRatio:        Math.random(),
+        xRatio:         Math.random(),
         yOffset,
-        baseYOffset:   yOffset,
+        baseYOffset:    yOffset,
         currentYOffset: yOffset,
-        phase:         Math.random() * Math.PI * 2,
-        glowPhase:     Math.random() * Math.PI * 2,
-        radius:        0.8 + Math.random() * 1.2,
-        baseRadius:    0,
-        color:         ['#ffffff', '#06B6D4', '#93C5FD'][Math.floor(Math.random() * 3)],
+        phase:          Math.random() * Math.PI * 2,
+        glowPhase:      Math.random() * Math.PI * 2,
+        radius:         0.8 + Math.random() * 1.2,
+        baseRadius:     0,
+        color:          ['#ffffff', '#06B6D4', '#93C5FD'][Math.floor(Math.random() * 3)],
         vx: 0, vy: 0,
-        px: 0, py: 0,
-        exploding:     false,
-        explodeVx:     0,
-        explodeVy:     0,
-        explodeTimer:  0,
+        exploding:      false,
+        explodeVx:      0,
+        explodeVy:      0,
+        explodeTimer:   0,
       };
     });
     particles.forEach(p => { p.baseRadius = p.radius; });
@@ -39,7 +38,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = (canvas.offsetWidth || window.innerWidth) * dpr;
+      canvas.width  = (canvas.offsetWidth  || window.innerWidth)  * dpr;
       canvas.height = (canvas.offsetHeight || window.innerHeight) * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
@@ -51,42 +50,73 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
       return Math.max(0, Math.min(1, (global - start) / (end - start)));
     }
 
-    function drawRevealLine({ localP, baseYRatio, amp, phaseOffset, opacity, lineWidth, c0, c1, glowColor }) {
+    function drawPremiumLine({
+      localP, baseYRatio, amp, phaseOffset,
+      speed, lineWidth, colorCenter, colorEdge,
+      glowColor, opacity,
+    }) {
       if (localP <= 0) return;
 
       const w = canvas.offsetWidth;
       const h = canvas.offsetHeight;
-      const baseY   = baseYRatio * h;
-      const revealX = w * localP;
-
-      const grad = ctx.createLinearGradient(0, 0, w, 0);
-      grad.addColorStop(0, 'transparent');
-      grad.addColorStop(0.08, c0);
-      grad.addColorStop(0.5, c1);
-      grad.addColorStop(0.92, c0);
-      grad.addColorStop(1, 'transparent');
-
-      ctx.save();
-      ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = grad;
-
-      if (glowColor) {
-        ctx.shadowBlur  = lineWidth > 1 ? 16 : 8;
-        ctx.shadowColor = glowColor;
-      }
-
+      const baseY     = baseYRatio * h;
+      const revealX   = w * localP;
       const waveBlend = Math.max(0, Math.min(1, (localP - 0.2) / 0.5));
 
-      ctx.beginPath();
-      for (let x = 0; x <= revealX; x += 1.5) {
+      const points = [];
+      for (let x = 0; x <= revealX; x += 2) {
         const t     = x / w;
-        const waveY = baseY + Math.sin(t * Math.PI * 2.5 + time + phaseOffset) * amp;
+        const waveY = baseY + Math.sin(t * Math.PI * 2.5 + time * speed + phaseOffset) * amp;
         const y     = baseY + (waveY - baseY) * waveBlend;
-
-        ctx.globalAlpha = opacity * Math.min(1, t / 0.05 + 0.2);
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        points.push({ x, y, t });
       }
+      if (points.length < 2) return;
+
+      const grad = ctx.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0,    'transparent');
+      grad.addColorStop(0.06, colorEdge);
+      grad.addColorStop(0.5,  colorCenter);
+      grad.addColorStop(0.94, colorEdge);
+      grad.addColorStop(1,    'transparent');
+
+      // CAMADA 1 — Bloom largo e difuso
+      ctx.save();
+      ctx.globalAlpha = opacity * 0.15;
+      ctx.lineWidth   = lineWidth * 8;
+      ctx.strokeStyle = glowColor;
+      ctx.filter      = 'blur(8px)';
+      ctx.beginPath();
+      points.forEach(({ x, y }, i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
       ctx.stroke();
+      ctx.filter = 'none';
+      ctx.restore();
+
+      // CAMADA 2 — Halo médio
+      ctx.save();
+      ctx.globalAlpha = opacity * 0.3;
+      ctx.lineWidth   = lineWidth * 3;
+      ctx.strokeStyle = glowColor;
+      ctx.filter      = 'blur(3px)';
+      ctx.beginPath();
+      points.forEach(({ x, y }, i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+      ctx.stroke();
+      ctx.filter = 'none';
+      ctx.restore();
+
+      // CAMADA 3 — Linha principal nítida com espessura variável
+      ctx.save();
+      ctx.strokeStyle = grad;
+      for (let i = 1; i < points.length; i++) {
+        const { x: x1, y: y1 }        = points[i - 1];
+        const { x: x2, y: y2, t: t2 } = points[i];
+        const centerFactor = 1 - Math.abs(t2 - 0.5) * 1.5;
+        ctx.lineWidth   = lineWidth * Math.max(0.3, centerFactor);
+        ctx.globalAlpha = Math.min(1, (t2 / 0.06) * opacity);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 
@@ -95,40 +125,55 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
       const h = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
 
-      const progress = revealProgress?.current ?? 1;
+      const progress      = revealProgress?.current ?? 1;
+      const isCtaHover    = ctaHovering?.current ?? false;
+      const my            = mousePos?.current?.y ?? -9999;
+      const mouseNearLine = Math.abs(my - h * 0.76) < 80;
 
-      const isCtaHover = ctaHovering?.current ?? false;
-
-      const my = mousePos?.current?.y ?? -9999;
-      const dist = Math.abs(my - h * 0.80);
-      const mouseNearLine = dist < 80;
-
-      const targetAmp = isCtaHover ? 90 : mouseNearLine ? 80 : 60;
+      const targetAmp = isCtaHover ? 140 : mouseNearLine ? 80 : 60;
       currentAmp += (targetAmp - currentAmp) * 0.05;
 
-      // FASE A — linha ciano forte (0% → 45%)
-      drawRevealLine({
-        localP: phaseProgress(progress, 0.0, 0.45),
-        baseYRatio: 0.80, amp: currentAmp,       phaseOffset: 0,
-        opacity: 0.9, lineWidth: 1.8,
-        c0: '#06B6D4', c1: '#ffffff', glowColor: '#06B6D4',
+      // LINHA 1 — Principal, próxima, mais rápida
+      drawPremiumLine({
+        localP:      phaseProgress(progress, 0.0, 0.45),
+        baseYRatio:  0.76,
+        amp:         currentAmp,
+        phaseOffset: 0,
+        speed:       1.0,
+        lineWidth:   1.8,
+        colorCenter: '#ffffff',
+        colorEdge:   '#06B6D4',
+        glowColor:   '#06B6D4',
+        opacity:     0.9,
       });
 
-      // FASE B — linha ciano fraca (30% → 70%)
-      drawRevealLine({
-        localP: phaseProgress(progress, 0.30, 0.70),
-        baseYRatio: 0.83, amp: currentAmp * 0.6, phaseOffset: 0.9,
-        opacity: 0.35, lineWidth: 0.9,
-        c0: '#0891B2', c1: '#06B6D4', glowColor: '#0891B2',
+      // LINHA 2 — Média, velocidade intermediária
+      drawPremiumLine({
+        localP:      phaseProgress(progress, 0.30, 0.70),
+        baseYRatio:  0.79,
+        amp:         currentAmp * 0.65,
+        phaseOffset: 0.9,
+        speed:       0.7,
+        lineWidth:   1.0,
+        colorCenter: '#06B6D4',
+        colorEdge:   '#0891B2',
+        glowColor:   '#0891B2',
+        opacity:     0.45,
       });
 
-      // FASE C — linha ciano clara (60% → 100%)
+      // LINHA 3 — Distante, mais lenta, quase invisível
       const phaseC = phaseProgress(progress, 0.60, 1.0);
-      drawRevealLine({
-        localP: phaseC,
-        baseYRatio: 0.77, amp: currentAmp * 0.45, phaseOffset: 1.8,
-        opacity: 0.20, lineWidth: 0.6,
-        c0: '#67E8F9', c1: '#E0F2FE', glowColor: '#67E8F9',
+      drawPremiumLine({
+        localP:      phaseC,
+        baseYRatio:  0.73,
+        amp:         currentAmp * 0.4,
+        phaseOffset: 1.8,
+        speed:       0.5,
+        lineWidth:   0.6,
+        colorCenter: '#67E8F9',
+        colorEdge:   '#E0F2FE',
+        glowColor:   '#67E8F9',
+        opacity:     0.22,
       });
 
       // Partículas da fase C
@@ -141,12 +186,12 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
         if (pulseTimer >= PULSE_INTERVAL) {
           pulseTimer = 0;
           particles.forEach(p => {
-            p.exploding     = true;
-            p.explodeTimer  = PULSE_DURATION;
-            const angle     = Math.random() * Math.PI * 2;
-            const force     = 2 + Math.random() * 4;
-            p.explodeVx     = Math.cos(angle) * force;
-            p.explodeVy     = Math.sin(angle) * force;
+            p.exploding    = true;
+            p.explodeTimer = PULSE_DURATION;
+            const angle    = Math.random() * Math.PI * 2;
+            const force    = 2 + Math.random() * 4;
+            p.explodeVx    = Math.cos(angle) * force;
+            p.explodeVy    = Math.sin(angle) * force;
           });
         }
 
@@ -154,11 +199,10 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
           const px = p.xRatio * w;
           if (px > w * phaseC) continue;
 
-          // Interpolar yOffset — CTA hover afasta partículas da linha
           const targetYOffset = isCtaHover ? p.baseYOffset * 3.5 : p.baseYOffset;
           p.currentYOffset += (targetYOffset - p.currentYOffset) * 0.04;
 
-          const lineY  = h * 0.80 + Math.sin((px / w) * Math.PI * 2.5 + time) * currentAmp;
+          const lineY  = h * 0.76 + Math.sin((px / w) * Math.PI * 2.5 + time) * currentAmp;
           const floatY = Math.sin(time * 14 + p.phase) * 8;
           const floatX = Math.cos(time * 8  + p.phase) * 3;
 
@@ -167,7 +211,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
 
           if (p.exploding && p.explodeTimer > 0) {
             p.explodeTimer -= 0.003;
-            const prog         = 1 - (p.explodeTimer / PULSE_DURATION);
+            const prog          = 1 - (p.explodeTimer / PULSE_DURATION);
             const explodeFactor = Math.sin(prog * Math.PI);
             finalX += p.explodeVx * explodeFactor * 30;
             finalY += p.explodeVy * explodeFactor * 20;
@@ -185,18 +229,18 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
           p.vx *= 0.88; p.vy *= 0.88;
           finalX += p.vx; finalY += p.vy;
 
-          const glowPulse    = 0.5 + 0.5 * Math.sin(time * 6 + p.glowPhase);
+          const glowPulse     = 0.5 + 0.5 * Math.sin(time * 6 + p.glowPhase);
           const glowIntensity = 2 + glowPulse * 6;
-          const absOffset    = Math.abs(p.yOffset);
-          const baseAlpha    = absOffset < 10 ? 0.8 : absOffset > 25 ? 0.15 : 0.45;
-          const alpha        = Math.min(1, baseAlpha * particleFade * (1 + glowPulse * 0.3));
-          const radiusPulse  = p.baseRadius * (1 + glowPulse * 0.4);
+          const absOffset     = Math.abs(p.yOffset);
+          const baseAlpha     = absOffset < 10 ? 0.8 : absOffset > 25 ? 0.15 : 0.45;
+          const alpha         = Math.min(1, baseAlpha * particleFade * (1 + glowPulse * 0.3));
+          const radiusPulse   = p.baseRadius * (1 + glowPulse * 0.4);
 
           ctx.save();
-          ctx.globalAlpha  = alpha;
-          ctx.shadowBlur   = glowIntensity;
-          ctx.shadowColor  = p.color;
-          ctx.fillStyle    = p.color;
+          ctx.globalAlpha = alpha;
+          ctx.shadowBlur  = glowIntensity;
+          ctx.shadowColor = p.color;
+          ctx.fillStyle   = p.color;
           ctx.beginPath();
           ctx.arc(finalX, finalY, radiusPulse, 0, Math.PI * 2);
           ctx.fill();

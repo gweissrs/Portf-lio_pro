@@ -1,12 +1,244 @@
-.about {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-lg);
+.section {
+  position: relative;
+  z-index: 1;
 }
 
-.placeholder {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+/* BLOCO 1 — Abertura */
+.opening {
+  padding: 8rem 0 0;
+}
+
+.label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #06B6D4;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.titleCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 7rem;
+}
+
+.bigStatement {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 6vw, 6rem);
+  font-weight: 700;
+  color: #F8FAFC;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  margin: 0;
+}
+
+.accent { color: #06B6D4; }
+
+/* BLOCO 2 — Marquee */
+.marqueeWrap {
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 1.2rem 0;
+  margin-bottom: 5rem;
+  white-space: nowrap;
+}
+
+.marqueeInner {
+  display: inline-flex;
+  align-items: center;
+  will-change: transform;
+}
+
+.marqueeItem {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 1.5rem;
+  white-space: nowrap;
+}
+
+.marqueeDot {
+  color: #06B6D4;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* BLOCO 3 — Título + Narrativa */
+.body {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 5rem;
+  align-items: start;
+  margin-bottom: 6rem;
+  padding-top: 4rem;
+}
+
+.narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lead {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 600;
+  color: #F8FAFC;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.paragraph {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: #94A3B8;
+  line-height: 1.85;
+  margin: 0;
+}
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.availDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+}
+
+.availText {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: #22c55e;
+  letter-spacing: 0.04em;
+}
+
+/* Métricas */
+.metricsCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: sticky;
+  top: 7rem;
+}
+
+.metricBlock {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0;
+}
+
+.metricNum {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 8vw, 7.5rem);
+  font-weight: 700;
+  color: #06B6D4;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  display: block;
+}
+
+.metricText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.5rem;
+}
+
+.metricTitle {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #F8FAFC;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.metricDesc {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.metricLine {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.05);
+}
+
+/* BLOCO 4 — Fechamento */
+.closing {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 5rem 0;
+}
+
+.closingText {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  font-weight: 500;
+  color: #475569;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+  max-width: 800px;
+  margin: 0;
+}
+
+.closingAccent { color: #F8FAFC; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .body {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .titleCol {
+    position: static;
+  }
+
+  .bigStatement {
+    font-size: clamp(2.8rem, 12vw, 4rem);
+  }
+
+  .metricsCol {
+    position: static;
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .metricLine { display: none; }
+
+  .metricBlock {
+    flex: 1;
+    padding: 1rem 0;
+  }
 }

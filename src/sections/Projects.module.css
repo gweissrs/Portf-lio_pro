@@ -1,12 +1,7 @@
-.projects {
+.section {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-lg);
-}
-
-.placeholder {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  padding: 8rem var(--spacing-lg) 6rem;
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }

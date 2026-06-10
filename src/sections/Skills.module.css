@@ -4,6 +4,9 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-3xl) var(--spacing-lg);
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .placeholder {

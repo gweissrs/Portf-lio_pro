@@ -8,12 +8,14 @@ const G_IDX = 11;
 const W_IDX = 21;
 
 export function BootSequence({ onComplete }) {
-  const overlayRef  = useRef(null);
-  const phraseRef   = useRef(null);
-  const gwGroupRef  = useRef(null);
-  const gRef        = useRef(null);
-  const wRef        = useRef(null);
-  const glowRef     = useRef(null);
+  const overlayRef        = useRef(null);
+  const phraseRef         = useRef(null);
+  const gwGroupRef        = useRef(null);
+  const gRef              = useRef(null);
+  const wRef              = useRef(null);
+  const glowRef           = useRef(null);
+  const particleCanvasRef = useRef(null);
+  const mousePosRef       = useRef({ x: -9999, y: -9999 });
 
   useEffect(() => {
     const overlay  = overlayRef.current;
@@ -24,6 +26,152 @@ export function BootSequence({ onComplete }) {
     const glowEl   = glowRef.current;
 
     if (!overlay || !phraseEl || !gwGroup || !gEl || !wEl || !glowEl) return;
+
+    // Canvas de partículas — dimensionar uma vez no mount
+    const pCanvas = particleCanvasRef.current;
+    const pCtx = pCanvas.getContext('2d');
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+
+    const handleResize = () => {
+      pCanvas.width = window.innerWidth;
+      pCanvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const handleMouseMove = (e) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    let particleAnimId = null;
+
+    const triggerExplosion = () => {
+      const W = pCanvas.width;
+      const H = pCanvas.height;
+      const cx = W / 2;
+      const cy = H / 2;
+
+      const COLORS = ['#ffffff', '#06B6D4', '#93C5FD', '#67E8F9'];
+      const mkParticle = (z, speed) => {
+        const angle = Math.random() * Math.PI * 2;
+        return {
+          x: cx, y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          z, settled: false,
+          restX: null, restY: null,
+          color: COLORS[Math.floor(Math.random() * 4)],
+        };
+      };
+
+      const particles = [];
+
+      // 80 partículas grandes na frente
+      for (let i = 0; i < 80; i++) {
+        const z = 0.7 + Math.random() * 0.3;
+        const p = mkParticle(z, 18 + Math.random() * 20);
+        p.radius  = 1.5 + z * 2.5;
+        p.opacity = 0.7 + z * 0.3;
+        particles.push(p);
+      }
+
+      // 100 partículas médias
+      for (let i = 0; i < 100; i++) {
+        const z = 0.3 + Math.random() * 0.4;
+        const p = mkParticle(z, 8 + Math.random() * 10);
+        p.radius  = 0.8 + z * 1.5;
+        p.opacity = 0.5 + z * 0.3;
+        particles.push(p);
+      }
+
+      // 70 partículas pequenas ao fundo
+      for (let i = 0; i < 70; i++) {
+        const z = 0.05 + Math.random() * 0.25;
+        const p = mkParticle(z, 5 + Math.random() * 8);
+        p.radius  = 0.4 + z * 1.0;
+        p.opacity = 0.2 + z * 0.3;
+        particles.push(p);
+      }
+
+      const drawParticles = () => {
+        pCtx.clearRect(0, 0, W, H);
+
+        for (const p of particles) {
+          // FASE EXPLOSÃO — sem interação com mouse, drag próprio por profundidade
+          if (p.restX === null) {
+            if (!p.settled) {
+              const drag = 0.95 + p.z * 0.015;
+              p.vx *= drag;
+              p.vy *= drag;
+              p.x  += p.vx;
+              p.y  += p.vy;
+              if (Math.abs(p.vx) < 0.15 && Math.abs(p.vy) < 0.15) {
+                p.settled = true;
+                p.vx = 0;
+                p.vy = 0;
+                p.restX = p.x;
+                p.restY = p.y;
+              }
+            }
+          }
+          // FASE INTERATIVA — repulsão + mola de retorno, damping 0.90
+          else {
+            const mx = mousePosRef.current.x;
+            const my = mousePosRef.current.y;
+            const dx = p.x - mx;
+            const dy = p.y - my;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const REPEL_RADIUS = 80;
+
+            if (dist < REPEL_RADIUS && dist > 0) {
+              const force = (1 - dist / REPEL_RADIUS) * 0.3;
+              const angle = Math.atan2(dy, dx);
+              p.vx += Math.cos(angle) * force;
+              p.vy += Math.sin(angle) * force;
+              p.settled = false;
+            }
+
+            if (p.settled) {
+              const dxR = p.restX - p.x;
+              const dyR = p.restY - p.y;
+              if (Math.sqrt(dxR * dxR + dyR * dyR) > 0.5) {
+                p.vx += dxR * 0.04;
+                p.vy += dyR * 0.04;
+                p.settled = false;
+              }
+            }
+
+            if (!p.settled) {
+              p.vx *= 0.90;
+              p.vy *= 0.90;
+              p.x  += p.vx;
+              p.y  += p.vy;
+              if (Math.abs(p.vx) < 0.08 && Math.abs(p.vy) < 0.08) {
+                p.settled = true;
+                p.vx = 0;
+                p.vy = 0;
+              }
+            }
+          }
+
+          pCtx.save();
+          pCtx.globalAlpha = p.opacity;
+          pCtx.shadowBlur  = 6 + p.z * 8;
+          pCtx.shadowColor = p.color;
+          pCtx.fillStyle   = p.color;
+          pCtx.beginPath();
+          pCtx.arc(p.x, p.y, Math.max(0.4, p.radius), 0, Math.PI * 2);
+          pCtx.fill();
+          pCtx.restore();
+        }
+
+        particleAnimId = requestAnimationFrame(drawParticles);
+      };
+
+      if (particleAnimId) cancelAnimationFrame(particleAnimId);
+      drawParticles();
+    };
 
     const otherLetters = phraseEl.querySelectorAll('[data-other]');
 
@@ -44,7 +192,7 @@ export function BootSequence({ onComplete }) {
       ease: 'expo.in',
     }, '+=0.8');
 
-    // FASE 3 — G e W centralizam na tela sem gap entre eles
+    // FASE 3 — G e W centralizam; explosão dispara no onComplete
     tl.add(() => {
       const gRect        = gRef.current.getBoundingClientRect();
       const wRect        = wRef.current.getBoundingClientRect();
@@ -54,7 +202,25 @@ export function BootSequence({ onComplete }) {
       const wTargetLeft   = gTargetLeft + gRect.width;
 
       gsap.to(gRef.current, { x: `+=${gTargetLeft - gRect.left}`, duration: 0.5, ease: 'expo.inOut' });
-      gsap.to(wRef.current, { x: `+=${wTargetLeft - wRect.left}`, duration: 0.5, ease: 'expo.inOut' });
+      gsap.to(wRef.current, {
+        x: `+=${wTargetLeft - wRect.left}`,
+        duration: 0.5,
+        ease: 'expo.inOut',
+        onUpdate: function() {
+          if (this.progress() >= 0.95 && !wRef.current._exploded) {
+            wRef.current._exploded = true;
+            gsap.to([gRef.current, wRef.current], {
+              fontWeight: 700,
+              duration: 0.15,
+              ease: 'power2.out',
+            });
+            triggerExplosion();
+          }
+        },
+        onComplete: () => {
+          wRef.current._exploded = false;
+        },
+      });
     });
 
     // FASE 4 — Glow burst (0.5s após fase 3 iniciar = quando ela termina)
@@ -90,116 +256,77 @@ export function BootSequence({ onComplete }) {
         },
       });
 
-      // Text shadow no GW
+      // Text shadow multicamada no GW
       gsap.to([gRef.current, wRef.current], {
-        textShadow: '0 0 20px #06B6D4, 0 0 40px #06B6D4',
-        duration: 0.2, ease: 'power3.out',
-        onComplete: () => {
-          gsap.to([gRef.current, wRef.current], {
-            textShadow: '0 0 8px rgba(6,182,212,0.15)',
-            duration: 0.5, ease: 'power2.out',
-          });
-        },
+        textShadow: `
+          0 0 10px rgba(6,182,212,0.9),
+          0 0 20px rgba(6,182,212,0.7),
+          0 0 40px rgba(6,182,212,0.5),
+          0 0 80px rgba(6,182,212,0.3)
+        `,
+        duration: 0.4, ease: 'power2.out',
       });
+
     }, '+=0.5');
 
-    // FASE 5 — GW voa para o logo da Navbar (0.3s após glow burst)
+    // FASE 5 — Câmera entra pelo espaço escuro entre G e W
     tl.add(() => {
-      const logoEl  = document.querySelector('[data-logo]');
-      const logoRect = logoEl?.getBoundingClientRect();
-      if (!logoRect || logoRect.width === 0) return;
+      gsap.set(overlayRef.current, { filter: 'brightness(1)' });
 
-      // Posição visual real de G e W após transforms individuais da FASE 3
-      const gRect = gRef.current.getBoundingClientRect();
-      const wRect = wRef.current.getBoundingClientRect();
+      const gRect       = gRef.current.getBoundingClientRect();
+      const wRect       = wRef.current.getBoundingClientRect();
+      const gwGroupRect = gwGroupRef.current.getBoundingClientRect();
 
-      // Centro visual real do par GW na tela
-      const gwVisualWidth  = wRect.right - gRect.left;
-      const gwCenterX      = gRect.left  + gwVisualWidth  / 2;
-      const gwCenterY      = gRect.top   + gRect.height   / 2;
-
-      // Centro alvo do logo
-      const targetCenterX  = logoRect.left + logoRect.width  / 2;
-      const targetCenterY  = logoRect.top  + logoRect.height / 2;
-
-      // Centro do gwGroup (pivô de escala do GSAP)
-      const gwGroupRect    = gwGroupRef.current.getBoundingClientRect();
-      const gwGroupCenterX = gwGroupRect.left + gwGroupRect.width  / 2;
-      const gwGroupCenterY = gwGroupRect.top  + gwGroupRect.height / 2;
-
-      // Offset entre centro visual do GW e pivô do gwGroup
-      const offsetX = gwCenterX - gwGroupCenterX;
-      const offsetY = gwCenterY - gwGroupCenterY;
-
-      const scale  = logoRect.height / gRect.height;
-      const deltaX = targetCenterX - gwGroupCenterX - scale * offsetX;
-      const deltaY = targetCenterY - gwGroupCenterY - scale * offsetY;
+      const zoomPointX = gRect.right - gwGroupRect.left;
+      const zoomPointY = gRect.top + gRect.height / 2 - gwGroupRect.top;
+      const originX    = (zoomPointX / gwGroupRect.width)  * 100;
+      const originY    = (zoomPointY / gwGroupRect.height) * 100;
 
       gsap.to(gwGroupRef.current, {
-        x: deltaX,
-        y: deltaY,
-        scale,
-        duration: 0.7,
-        ease: 'expo.inOut',
-        transformOrigin: 'center center',
+        scale: 400,
+        duration: 1.2,
+        ease: 'power3.in',
+        transformOrigin: `${originX}% ${originY}%`,
       });
-    }, '+=0.3');
 
-    // FASE 6 — span simples na posição do logo faz crossfade com logo real
-    tl.add(() => {
-      const logoEl   = document.querySelector('[data-logo]');
-      const logoRect = logoEl?.getBoundingClientRect();
-      if (!logoRect) return;
-
-      const logoComputedStyle = window.getComputedStyle(logoEl);
-      const clone = document.createElement('span');
-      clone.textContent = 'GW';
-      clone.style.cssText = `
-        position: fixed;
-        top: ${logoRect.top}px;
-        left: ${logoRect.left}px;
-        width: ${logoRect.width}px;
-        height: ${logoRect.height}px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        font-family: ${logoComputedStyle.fontFamily};
-        font-size: ${logoComputedStyle.fontSize};
-        font-weight: ${logoComputedStyle.fontWeight};
-        color: ${logoComputedStyle.color};
-        letter-spacing: ${logoComputedStyle.letterSpacing};
-        z-index: 10000;
-        pointer-events: none;
-        margin: 0;
-        padding: 0;
-        line-height: 1;
-      `;
-      document.body.appendChild(clone);
-
-      gsap.set(gwGroupRef.current, { opacity: 0 });
+      gsap.to(particleCanvasRef.current, {
+        scale: 400,
+        duration: 1.2,
+        ease: 'power3.in',
+        transformOrigin: `${originX}% ${originY}%`,
+        onComplete: () => {
+          if (particleAnimId) cancelAnimationFrame(particleAnimId);
+        },
+      });
 
       gsap.to(overlayRef.current, {
         opacity: 0,
-        duration: 0.5,
-        delay: 0.1,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          onComplete();
-          gsap.to(clone, {
-            opacity: 0,
-            duration: 0.3,
-            delay: 0.3,
-            onComplete: () => clone.remove(),
-          });
-        },
+        duration: 0.4,
+        ease: 'power2.in',
+        delay: 0.9,
       });
-    }, '+=0.3');
+    }, '+=0.8');
 
-    return () => tl.kill();
+    // FASE 6 — Hero aparece após tudo escurecer
+    tl.add(() => {
+      onComplete();
+    }, '+=1.5');
+
+    return () => {
+      tl.kill();
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (particleAnimId) cancelAnimationFrame(particleAnimId);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div ref={overlayRef} className={styles.overlay}>
+      <canvas
+        ref={particleCanvasRef}
+        className={styles.particleCanvas}
+        aria-hidden="true"
+      />
       <div ref={gwGroupRef} className={styles.gwGroup}>
         {/* Orbe de glow — top/left 50% relativo ao gwGroup */}
         <div ref={glowRef} className={styles.glowBurst} aria-hidden="true" />

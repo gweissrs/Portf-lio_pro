@@ -5,8 +5,7 @@
   right: 0;
   z-index: 100;
   height: var(--navbar-height);
-  transition: background-color var(--transition-base), backdrop-filter var(--transition-base),
-    border-bottom var(--transition-base);
+  transition: background-color var(--transition-base), backdrop-filter var(--transition-base);
 }
 
 .header::after {
