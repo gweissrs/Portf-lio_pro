@@ -4,30 +4,31 @@
 
 .cursor {
   position: fixed;
-  top: -20px;
-  left: -20px;
-  width: 40px;
-  height: 40px;
+  top: -25px;
+  left: -25px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: #06B6D4;
   pointer-events: none;
   z-index: 99999;
-  will-change: transform;
+
+  background: rgba(255, 255, 255, 0.001);
+
+  backdrop-filter: invert(1) hue-rotate(180deg);
+  -webkit-backdrop-filter: invert(1) hue-rotate(180deg);
+
   transition:
-    width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    left 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.2s ease;
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cursor.expanded {
-  width: 100px;
-  height: 100px;
-  top: -50px;
-  left: -50px;
-  background: #06B6D4;
-  opacity: 0.15;
+  width: 90px;
+  height: 90px;
+  top: -45px;
+  left: -45px;
 }
 
 @media (hover: none) {

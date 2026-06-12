@@ -61,24 +61,26 @@ export function About() {
           {/* COLUNA 2 — Narrativa */}
           <div className={styles.narrative}>
             <p className={styles.lead} data-reveal="up" data-delay="0">
-              Já tenho sistemas em produção.
+              Comecei a programar em 2026. Hoje já tenho
+              produtos reais no ar.
             </p>
             <p className={styles.paragraph} data-reveal="up" data-delay="0.1">
-              Construí o PayReminder — sistema de cobrança
-              automatizada que gera receita recorrente para
-              uma empresa real. Desenvolvi a landing page
-              do meu pai que trouxe clientes reais.
+              Em poucos meses saí do zero para o PayReminder
+              — um sistema de cobrança automatizada que hoje
+              gera receita recorrente para uma empresa real.
+              Desenvolvi também a landing page do meu pai,
+              que já trouxe clientes novos.
             </p>
             <p className={styles.paragraph} data-reveal="up" data-delay="0.2">
-              Trabalho no Hospital Baía Sul como menor
-              aprendiz — tecnologia dentro de um hospital
-              te ensina que erro tem consequência real.
+              Trabalho no Hospital Baía Sul como menor aprendiz.
+              Não é tech, mas me ensinou rotina, responsabilidade
+              e como ambientes profissionais funcionam de verdade.
             </p>
             <p className={styles.paragraph} data-reveal="up" data-delay="0.3">
-              O que me move: ver algo que construí
-              funcionando na vida de alguém. Não um exercício.
-              Um produto real, com usuário real,
-              resolvendo um problema real.
+              Uso IA como ferramenta de estudo — para pesquisar
+              boas práticas, validar decisões técnicas e acelerar
+              meu aprendizado. O que me motiva é resolver problemas
+              reais, sempre pensando na experiência de quem vai usar.
             </p>
             <div className={styles.availability} data-reveal="up" data-delay="0.42">
               <span className={styles.availDot} />

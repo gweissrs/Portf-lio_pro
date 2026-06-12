@@ -200,7 +200,7 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
           </h1>
 
           <p ref={jobTitleRef} className={styles.jobTitle}>
-            Desenvolvedor Full Stack
+            Desenvolvedor Front-end
           </p>
 
           <p ref={locationRef} className={styles.location}>
