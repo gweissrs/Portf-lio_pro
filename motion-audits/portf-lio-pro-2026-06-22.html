@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>portf-lio-pro motion audit — 2026-06-22</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── 1. TOKENS — dark defaults ─────────────────────────────────────── */
+    :root {
+      --ink:         oklch(0.155 0.006 255);
+      --surface:     oklch(0.195 0.007 255);
+      --surface-2:   oklch(0.235 0.008 255);
+      --paper:       oklch(0.945 0.004 255);
+      --paper-dim:   oklch(0.800 0.006 255);
+      --muted:       oklch(0.680 0.008 255);
+      --faint:       oklch(0.505 0.008 255);
+      --line:        oklch(0.95 0.01 255 / 0.09);
+      --line-strong: oklch(0.95 0.01 255 / 0.16);
+
+      /* Severity — FIXED across themes */
+      --sev-crit:    oklch(0.655 0.185 25);
+      --sev-imp:     oklch(0.805 0.125 78);
+      --sev-opp:     oklch(0.745 0.135 152);
+      --sev-crit-bg: oklch(0.655 0.185 25 / 0.12);
+      --sev-imp-bg:  oklch(0.805 0.125 78 / 0.12);
+      --sev-opp-bg:  oklch(0.745 0.135 152 / 0.12);
+
+      /* Timing budget ramp */
+      --t-good: oklch(0.745 0.135 152);
+      --t-mid:  oklch(0.805 0.125 78);
+      --t-slow: oklch(0.655 0.185 25);
+
+      /* Accent — neutral default (no brand color: project cyan is in the AI-cliché zone) */
+      --accent:      var(--paper);
+      --accent-soft: var(--paper-dim);
+      --accent-tint: oklch(0.95 0.004 255 / 0.06);
+
+      --display: "Familjen Grotesk", "Hanken Grotesk", system-ui, sans-serif;
+      --sans:    "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --mono:    "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    /* ── 2. LIGHT MODE OVERRIDE ────────────────────────────────────────── */
+    :root:has(#theme-light:checked) {
+      --ink:         oklch(0.985 0.003 255);
+      --surface:     oklch(0.965 0.004 255);
+      --surface-2:   oklch(0.940 0.005 255);
+      --paper:       oklch(0.180 0.006 255);
+      --paper-dim:   oklch(0.330 0.008 255);
+      --muted:       oklch(0.475 0.010 255);
+      --faint:       oklch(0.640 0.009 255);
+      --line:        oklch(0.180 0.010 255 / 0.12);
+      --line-strong: oklch(0.180 0.010 255 / 0.22);
+
+      --sev-crit:    oklch(0.52 0.185 25);
+      --sev-imp:     oklch(0.58 0.125 78);
+      --sev-opp:     oklch(0.52 0.135 152);
+    }
+
+    /* ── 3. LAYOUT & COMPONENTS ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+
+    /* visually-hidden */
+    .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+    /* Theme switch */
+    .theme-switch {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 48px;
+    }
+    .theme-switch .seg {
+      display: inline-flex;
+      border: 1px solid var(--line-strong);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .theme-switch .seg label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 5px 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    #theme-dark:checked ~ .wrap .seg label[for="theme-dark"],
+    #theme-light:checked ~ .wrap .seg label[for="theme-light"] {
+      background: color-mix(in oklch, var(--paper) 12%, transparent);
+      color: var(--paper);
+    }
+
+    /* Typography utilities */
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .mono-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--accent-tint);
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--paper-dim);
+    }
+
+    /* Header */
+    .report-header { margin-bottom: 56px; }
+    .report-header h1 {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .report-header .lede {
+      font-size: 15px;
+      color: var(--paper-dim);
+      max-width: 58ch;
+      margin-bottom: 20px;
+    }
+    .meta-row {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .meta-row span + span::before { content: " · "; }
+
+    .stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-item a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .stat-num.crit { color: var(--sev-crit); }
+    .stat-num.imp  { color: var(--sev-imp); }
+    .stat-num.opp  { color: var(--sev-opp); }
+    .stat-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+    hr.divider { border: none; border-top: 1px solid var(--line); margin: 48px 0; }
+
+    /* Assessment */
+    .assessment {
+      margin-bottom: 48px;
+    }
+    .assessment p {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--paper-dim);
+      max-width: 68ch;
+    }
+
+    /* Section headings */
+    .section-heading {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-heading::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* Lens summary table */
+    .lens-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 48px;
+      font-size: 14px;
+    }
+    .lens-table th {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+      padding: 0 0 10px;
+      font-weight: 500;
+    }
+    .lens-table td {
+      padding: 12px 0;
+      vertical-align: top;
+      border-top: 1px solid var(--line);
+      transition: background 0.2s ease;
+    }
+    .lens-table td:first-child { padding-right: 24px; width: 220px; }
+    .lens-table td:nth-child(2) { padding-right: 24px; width: 140px; }
+    .designer-name { font-weight: 600; display: block; margin-bottom: 4px; }
+    .weight-chip {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--line-strong);
+      border-radius: 100px;
+      padding: 2px 7px;
+    }
+    .verdict-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+    .verdict-dot.crit  { background: var(--sev-crit); }
+    .verdict-dot.imp   { background: var(--sev-imp); }
+    .verdict-dot.opp   { background: var(--sev-opp); }
+    .verdict-dot.mixed { background: var(--muted); }
+    .verdict-dot.good  { background: var(--sev-opp); }
+    .verdict-wrap { display: flex; align-items: flex-start; gap: 4px; font-weight: 600; font-size: 13px; }
+    .verdict-lbl { color: var(--paper-dim); }
+
+    /* Timing diagram */
+    .timing-grid {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 32px;
+      margin-bottom: 48px;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .timing-grid { grid-template-columns: 1fr; } }
+
+    .timing-svg { width: 100%; height: auto; display: block; }
+    .timing-key { font-size: 13px; }
+    .timing-key li { list-style: none; display: flex; align-items: center; gap: 8px; padding: 5px 0; color: var(--paper-dim); }
+    .k-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .k-dot.good { background: var(--t-good); color: oklch(0.155 0.006 255); }
+    .k-dot.mid  { background: var(--t-mid);  color: oklch(0.155 0.006 255); }
+    .k-dot.slow { background: var(--t-slow); color: oklch(0.985 0.003 255); }
+    .k-dot.none { border: 1.5px dashed var(--muted); background: transparent; color: var(--muted); }
+    .timing-note { font-size: 12.5px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
+
+    /* Per-lens sections */
+    .lens-sec { margin-bottom: 56px; }
+    .lens-sec__head {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .lens-sec__head h3 {
+      font-family: var(--display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+    }
+    .lens-sec__weight {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--line-strong);
+      border-radius: 100px;
+      padding: 2px 8px;
+    }
+    .lens-sec__verdict {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--paper-dim);
+      margin-bottom: 28px;
+    }
+
+    .lens-block { margin-bottom: 24px; }
+    .lens-block .mono-label { margin-bottom: 10px; display: block; }
+
+    .lens-list { list-style: none; padding: 0; }
+    .lens-list li {
+      font-size: 14px;
+      color: var(--paper-dim);
+      padding: 5px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .lens-list .marker { flex-shrink: 0; margin-top: 2px; }
+    .lens-list.good .marker { color: var(--sev-opp); }
+    .lens-list.opp  .marker { color: var(--sev-opp); }
+
+    .lens-take {
+      background: var(--accent-tint);
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--paper-dim);
+      margin-top: 24px;
+      font-style: italic;
+    }
+    .lens-take strong { font-style: normal; color: var(--paper); }
+
+    .lens-empty { color: var(--faint); font-style: italic; font-size: 13px; }
+
+    /* Finding rows */
+    .finding-row {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s ease;
+    }
+    .finding-row:hover { border-color: oklch(0.95 0.01 255 / 0.28); }
+    @media (max-width: 860px) { .finding-row { grid-template-columns: 1fr; } }
+
+    .find-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .sev-chip {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 100px;
+      padding: 3px 9px;
+      font-weight: 600;
+    }
+    .sev-chip.crit { background: var(--sev-crit-bg); color: var(--sev-crit); }
+    .sev-chip.imp  { background: var(--sev-imp-bg);  color: var(--sev-imp); }
+    .lens-chip {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 100px;
+      padding: 3px 9px;
+      background: var(--accent-tint);
+      color: var(--muted);
+      border: 1px solid var(--line-strong);
+    }
+    h4.find-title {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+    .find-body p { font-size: 13.5px; color: var(--paper-dim); margin-bottom: 10px; line-height: 1.6; }
+    .find-body .label { font-weight: 600; color: var(--paper); display: inline-block; margin-right: 4px; }
+    .fix { background: var(--accent-tint); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; margin: 8px 0 10px; }
+    .find-loc { font-size: 12px; color: var(--faint); margin-top: 8px !important; }
+
+    /* Demo cards */
+    .demo { position: relative; }
+    .demo__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .demo__meta { min-width: 0; }
+    .demo__title { display: block; font-size: 13px; font-weight: 600; color: var(--paper); line-height: 1.3; }
+    .demo__timing { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .demo__controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .demo__loop { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+    .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 100px; overflow: hidden; }
+    .seg label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; cursor: pointer; user-select: none; transition: background 0.15s ease, color 0.15s ease; }
+
+    /* Auto/Light/Dark stage toggle per demo */
+    .demo input[id$="-a"]:checked ~ .demo__bar .seg label[for$="-a"],
+    .demo input[id$="-l"]:checked ~ .demo__bar .seg label[for$="-l"],
+    .demo input[id$="-d"]:checked ~ .demo__bar .seg label[for$="-d"] {
+      background: color-mix(in oklch, var(--paper) 12%, transparent);
+      color: var(--paper);
+    }
+
+    .demo__stage {
+      --st-bg: var(--surface-2);
+      --st-fg: var(--paper);
+      --st-line: var(--line-strong);
+      --st-dim: color-mix(in oklch, var(--paper) 55%, transparent);
+      background: var(--st-bg);
+      color: var(--st-fg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 32px 24px;
+      min-height: 168px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .demo input[id$="-l"]:checked ~ .demo__stage {
+      --st-bg: oklch(0.985 0.003 255);
+      --st-fg: oklch(0.180 0.006 255);
+      --st-line: oklch(0.180 0.010 255 / 0.18);
+      --st-dim: oklch(0.180 0.010 255 / 0.45);
+    }
+    .demo input[id$="-d"]:checked ~ .demo__stage {
+      --st-bg: oklch(0.180 0.006 255);
+      --st-fg: oklch(0.985 0.003 255);
+      --st-line: oklch(0.985 0.010 255 / 0.18);
+      --st-dim: oklch(0.985 0.010 255 / 0.50);
+    }
+
+    .ui-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--st-dim); }
+    .ui-word {
+      font-family: "Familjen Grotesk", system-ui, sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--st-fg);
+    }
+    .ui-word-sm {
+      font-family: "Familjen Grotesk", system-ui, sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: var(--st-fg);
+    }
+    .ui-stack { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+    .ui-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 100px;
+      border: 1px solid var(--st-line);
+      color: var(--st-dim);
+      margin-bottom: 8px;
+    }
+
+    /* Recommendations tables */
+    .rec-tier { margin-bottom: 40px; }
+    .tier-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .tier-label.crit { color: var(--sev-crit); }
+    .tier-label.imp  { color: var(--sev-imp); }
+    .tier-label.opp  { color: var(--sev-opp); }
+    .tier-count { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 12px; }
+
+    .rec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rec-table th { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0 16px 8px 0; font-weight: 500; }
+    .rec-table td { padding: 10px 16px 10px 0; vertical-align: top; border-top: 1px solid var(--line); color: var(--paper-dim); line-height: 1.5; }
+    .rec-table td:first-child { width: 24px; }
+
+    /* Ref summary */
+    .ref-summary {
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 48px;
+    }
+    .ref-lean { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    @media (max-width: 600px) { .ref-lean { grid-template-columns: 1fr; } }
+    .ref-lean-item { font-size: 13px; color: var(--paper-dim); line-height: 1.5; }
+    .ref-lean-item strong { display: block; color: var(--paper); margin-bottom: 2px; }
+
+    /* Footer */
+    footer {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    /* ── 4. PER-FINDING MOTION CODE ────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .demo__loop { display: none; }
+      [class*="__mt"], [class*="__mt"] * { animation: none !important; transition: none !important; }
+    }
+
+    /* Finding 1 — prefers-reduced-motion: what the guarded slide-in looks like */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes m1 {
+        0%   { opacity: 0; transform: translateX(-48px); }
+        60%  { opacity: 1; transform: translateX(0); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+      .demo-1__mt {
+        animation: m1 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+    }
+
+    /* Finding 2 — blur + opacity + translateY enter (Jakub materializing) */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes m2 {
+        0%   { opacity: 0; transform: translateY(10px); filter: blur(6px); }
+        60%  { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+        100% { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+      }
+      .demo-2__mt {
+        animation: m2 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      }
+    }
+
+    /* Finding 3 — xPercent-based slide vs fixed px */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes m3 {
+        0%   { opacity: 0; transform: translateX(-100%); }
+        60%  { opacity: 1; transform: translateX(0); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+      .demo-3__mt {
+        overflow: hidden;
+        animation: m3 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+    }
+
+    /* Finding 4 — power1.inOut easing in a scrub proxy */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes m4-a {
+        0%   { opacity: 0; transform: translateY(30px); }
+        60%  { opacity: 1; transform: translateY(0); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes m4-b {
+        0%   { opacity: 0; transform: translateY(30px); }
+        60%  { opacity: 1; transform: translateY(0); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .demo-4__mt-a {
+        animation: m4-a 3s linear infinite;
+        color: var(--st-dim);
+      }
+      .demo-4__mt-b {
+        animation: m4-b 3s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+        color: var(--st-fg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <input class="vh" type="radio" name="theme" id="theme-dark" checked>
+  <input class="vh" type="radio" name="theme" id="theme-light">
+
+  <div class="wrap">
+
+    <!-- Theme switch -->
+    <div class="theme-switch">
+      <div class="seg">
+        <label for="theme-dark">Dark</label>
+        <label for="theme-light">Light</label>
+      </div>
+    </div>
+
+    <!-- ── HEADER ──────────────────────────────────────────────────────── -->
+    <header class="report-header">
+      <p class="eyebrow">MOTION AUDIT · DESIGN-MOTION-PRINCIPLES</p>
+      <h1>portf-lio-pro — About section animation review</h1>
+      <p class="lede">
+        Personal portfolio for Guilherme Weiss, 17-year-old developer in Florianópolis.
+        Brand intent: cinematic, precise, unafraid. Audience: recruiters and tech leads scanning
+        for signal in under 60 seconds.
+      </p>
+      <p class="meta-row">
+        <span>React + Vite</span>
+        <span>GSAP + ScrollTrigger + SplitText</span>
+        <span>Audited 2026-06-22</span>
+        <span>Scope: About section (src/sections/About.jsx)</span>
+      </p>
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-num crit">1</span>
+          <a href="#rec-crit" class="stat-lbl">Critical</a>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num imp">3</span>
+          <a href="#rec-imp" class="stat-lbl">Important</a>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num opp">3</span>
+          <a href="#rec-opp" class="stat-lbl">Opportunities</a>
+        </div>
+      </div>
+    </header>
+
+    <hr class="divider">
+
+    <!-- ── OVERALL ASSESSMENT ─────────────────────────────────────────── -->
+    <section class="assessment">
+      <p class="eyebrow">OVERALL</p>
+      <p>
+        The About section has a clear cinematic ambition — left-to-right slide for the big statement,
+        upward line-by-line reveal for the narrative, a scrub-driven entrance that ties motion to scroll.
+        The structure is right. The critical gap is accessibility: every GSAP animation fires unconditionally,
+        with no check for <code>prefers-reduced-motion</code>. On a recruiter's
+        system with motion reduction enabled, this is a WCAG 2.1 SC 2.3.3 violation and a first impression
+        that breaks before it lands. After that fix, three polish opportunities lift the motion from functional
+        to felt: adding blur to the enter transitions (Jakub's materializing quality), switching to
+        percentage-based slide offsets so the motion scales with the viewport, and giving the scrub timelines
+        a subtle ease curve so the animation feels organic rather than mechanical.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 01 · LENS SUMMARY ──────────────────────────────────────────── -->
+    <p class="section-heading">01 · LENS SUMMARY</p>
+    <table class="lens-table">
+      <thead>
+        <tr>
+          <th>Lens</th>
+          <th>Verdict</th>
+          <th>One-line read</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="designer-name">Emil Kowalski</span>
+            <span class="weight-chip">Equal</span>
+          </td>
+          <td>
+            <div class="verdict-wrap">
+              <span class="verdict-dot crit"></span>
+              <span class="verdict-lbl">Problem</span>
+            </div>
+          </td>
+          <td>Critical a11y gap; x offset doesn't scale; scrub easing is mechanical.</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="designer-name">Jakub Krehel</span>
+            <span class="weight-chip">Equal</span>
+          </td>
+          <td>
+            <div class="verdict-wrap">
+              <span class="verdict-dot imp"></span>
+              <span class="verdict-lbl">Concern</span>
+            </div>
+          </td>
+          <td>Enter lacks blur — the materializing quality is missing. Easing is flat.</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="designer-name">Jhey Tompkins</span>
+            <span class="weight-chip">Equal</span>
+          </td>
+          <td>
+            <div class="verdict-wrap">
+              <span class="verdict-dot opp"></span>
+              <span class="verdict-lbl">Mixed</span>
+            </div>
+          </td>
+          <td>Scroll-driven structure is inspired; creative range stays unexplored.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ── 02 · WHERE THE TIMINGS LAND ───────────────────────────────── -->
+    <p class="section-heading">02 · WHERE THE TIMINGS LAND</p>
+    <div class="timing-grid">
+      <div>
+        <svg class="timing-svg" viewBox="0 0 580 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Duration budget diagram for About section animations">
+          <style>
+            .t-zone-good { fill: oklch(0.745 0.135 152 / 0.10); }
+            .t-zone-mid  { fill: oklch(0.805 0.125 78  / 0.10); }
+            .t-zone-slow { fill: oklch(0.655 0.185 25  / 0.10); }
+            .t-zone-sd   { fill: oklch(0.505 0.008 255 / 0.10); }
+            .t-axis      { stroke: oklch(0.95 0.01 255 / 0.12); stroke-width: 1; }
+            .t-tick      { stroke: oklch(0.95 0.01 255 / 0.16); stroke-width: 1; }
+            .t-lbl       { font-family: "Geist Mono", monospace; font-size: 9px; fill: oklch(0.505 0.008 255); letter-spacing: 0.06em; }
+            .t-zone-lbl  { font-family: "Geist Mono", monospace; font-size: 8px; fill: oklch(0.505 0.008 255); letter-spacing: 0.08em; text-transform: uppercase; }
+            .dot-slow    { fill: oklch(0.655 0.185 25); }
+            .dot-mid     { fill: oklch(0.805 0.125 78); }
+            .dot-good    { fill: oklch(0.745 0.135 152); }
+            .dot-none    { fill: transparent; stroke: oklch(0.505 0.008 255); stroke-width: 1.5; stroke-dasharray: 3 2; }
+            .dot-lbl     { font-family: "Geist Mono", monospace; font-size: 9px; fill: oklch(0.155 0.006 255); font-weight: 600; }
+            .dot-lbl-ext { font-family: "Geist Mono", monospace; font-size: 9px; fill: oklch(0.985 0.003 255); font-weight: 600; }
+            .t-note      { font-family: "Public Sans", sans-serif; font-size: 11px; fill: oklch(0.505 0.008 255); }
+          </style>
+          <!-- SD zone -->
+          <rect class="t-zone-sd" x="16" y="30" width="64" height="120" rx="3"/>
+          <text class="t-zone-lbl" x="48" y="20" text-anchor="middle">Scroll</text>
+          <text class="t-zone-lbl" x="48" y="29" text-anchor="middle">Driven</text>
+          <!-- Instant + Responsive zone (0–300ms) -->
+          <rect class="t-zone-good" x="96" y="30" width="140" height="120" rx="3"/>
+          <text class="t-zone-lbl" x="166" y="20" text-anchor="middle">0–300ms · Instant / Responsive</text>
+          <!-- Deliberate zone (300–500ms) -->
+          <rect class="t-zone-mid" x="236" y="30" width="90" height="120" rx="3"/>
+          <text class="t-zone-lbl" x="281" y="20" text-anchor="middle">300–500ms</text>
+          <!-- Sluggish zone (500ms+) -->
+          <rect class="t-zone-slow" x="326" y="30" width="240" height="120" rx="3"/>
+          <text class="t-zone-lbl" x="446" y="20" text-anchor="middle">500ms+ · Sluggish</text>
+          <!-- Axis -->
+          <line class="t-axis" x1="96" y1="160" x2="566" y2="160"/>
+          <!-- Ticks & labels -->
+          <line class="t-tick" x1="96"  y1="157" x2="96"  y2="163"/>
+          <line class="t-tick" x1="189" y1="157" x2="189" y2="163"/>
+          <line class="t-tick" x1="236" y1="157" x2="236" y2="163"/>
+          <line class="t-tick" x1="326" y1="157" x2="326" y2="163"/>
+          <line class="t-tick" x1="566" y1="157" x2="566" y2="163"/>
+          <text class="t-lbl" x="96"  y="173" text-anchor="middle">0</text>
+          <text class="t-lbl" x="189" y="173" text-anchor="middle">200ms</text>
+          <text class="t-lbl" x="236" y="173" text-anchor="middle">300ms</text>
+          <text class="t-lbl" x="326" y="173" text-anchor="middle">500ms</text>
+          <text class="t-lbl" x="566" y="173" text-anchor="middle">1000ms+</text>
+          <!-- Dots: scroll-driven at SD zone -->
+          <circle class="dot-none" cx="48" cy="90" r="11"/>
+          <text class="dot-lbl-ext" x="48" y="94" text-anchor="middle">3</text>
+          <circle class="dot-none" cx="48" cy="120" r="11"/>
+          <text class="dot-lbl-ext" x="48" y="124" text-anchor="middle">4</text>
+          <!-- Dot 2: exit 350ms → deliberate zone -->
+          <circle class="dot-mid" cx="270" cy="90" r="11"/>
+          <text class="dot-lbl" x="270" y="94" text-anchor="middle">2</text>
+          <!-- Dot 1: data-reveal 1000ms → sluggish zone -->
+          <circle class="dot-slow" cx="510" cy="90" r="11"/>
+          <text class="dot-lbl" x="510" y="94" text-anchor="middle">1</text>
+          <!-- Note -->
+          <text class="t-note" x="16" y="200">Scroll-driven animations have no fixed duration — they're indexed by scroll progress, not time.</text>
+        </svg>
+        <p class="timing-note">
+          <strong style="color:var(--sev-slow)">What's off:</strong>
+          The data-reveal at 1000ms sits in the Sluggish zone by Emil's standard (&lt;300ms for UI transitions).
+          For a creative portfolio viewed occasionally, Jakub accepts up to 800ms with expo.out — the current
+          1000ms is at the outer edge. Exit animations (350ms) are appropriate. Scroll-driven timelines (3, 4)
+          aren't plotted on the ms axis — their pace is user-controlled, which is correct.
+        </p>
+      </div>
+      <ul class="timing-key">
+        <li>
+          <span class="k-dot slow">1</span>
+          <span>data-reveal — <code>1000ms</code> · expo.out</span>
+        </li>
+        <li>
+          <span class="k-dot mid">2</span>
+          <span>Exit animations — <code>350ms</code> · power3.in</span>
+        </li>
+        <li>
+          <span class="k-dot none">3</span>
+          <span>bigLines enter — scroll-driven · ease: none</span>
+        </li>
+        <li>
+          <span class="k-dot none">4</span>
+          <span>SplitText narrative — scroll-driven · ease: none</span>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 03 · EMIL KOWALSKI ──────────────────────────────────────────── -->
+    <section class="lens-sec">
+      <div class="lens-sec__head">
+        <h3>Emil Kowalski — Restraint &amp; Speed</h3>
+        <span class="lens-sec__weight">Equal</span>
+      </div>
+      <div class="lens-sec__verdict">
+        <span class="verdict-dot crit"></span>
+        Problem — a critical accessibility failure and a scaling issue that need fixing before launch.
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">WHAT'S WORKING WELL</span>
+        <ul class="lens-list good">
+          <li><span class="marker">✓</span> Exit animation uses <code>power3.in</code> at 350ms — within Emil's deliberate range and easing has personality.</li>
+          <li><span class="marker">✓</span> Stagger on exit is tight (<code>0.04s</code>) — doesn't overstay its welcome; exits should be faster than enters.</li>
+          <li><span class="marker">✓</span> Scrub-driven enters (no fixed duration) correctly tie animation pacing to the user's scroll speed, not a timer.</li>
+          <li><span class="marker">✓</span> <code>gsap.context()</code> with cleanup — animations are properly scoped and reverted on unmount.</li>
+        </ul>
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">ISSUES TO ADDRESS</span>
+
+        <!-- FINDING 1 — Critical -->
+        <div class="finding-row" data-sev="crit">
+          <div class="finding-row__prose">
+            <div class="find-tags">
+              <span class="sev-chip crit">Critical</span>
+              <span class="lens-chip">Emil</span>
+              <span class="lens-chip">Jakub</span>
+              <span class="lens-chip">Jhey</span>
+            </div>
+            <h4 class="find-title">No <code>prefers-reduced-motion</code> guard on any GSAP animation</h4>
+            <div class="find-body">
+              <p><span class="label">What</span>Every animation in the <code>useEffect</code> — data-reveal, bigLines slide,
+              SplitText narrative enter, and both exit timelines — runs unconditionally.
+              Users who enable motion reduction (vestibular disorders, migraine, seizure risk) are exposed to
+              the full parallax-scrub experience with no fallback.</p>
+              <p><span class="label">Why it matters</span>WCAG 2.1 SC 2.3.3 (Level AAA) and the project's own PRODUCT.md
+              target WCAG AA with an explicit note to respect <code>prefers-reduced-motion</code>. Beyond compliance,
+              this is a recruiter tool — if a target viewer has this preference set, the first impression is a broken
+              page, not a cinematic one.</p>
+              <div class="fix">
+                <p><span class="label">Recommended motion</span>Read the preference once at the top of <code>useEffect</code>
+                and skip (or crossfade-only) all GSAP animations when it's set.
+                Use <code>gsap.set()</code> to place elements at their final state immediately, then return.
+                Optionally listen for runtime changes with <code>MediaQueryList.addEventListener('change', ...)</code>
+                so users who toggle the OS setting mid-session are covered.</p>
+              </div>
+              <p class="find-loc"><code>src/sections/About.jsx:12</code> (useEffect — entire block)</p>
+            </div>
+          </div>
+          <!-- Demo 1 -->
+          <div class="demo">
+            <input class="vh" type="radio" name="st1" id="st1-a" checked>
+            <input class="vh" type="radio" name="st1" id="st1-l">
+            <input class="vh" type="radio" name="st1" id="st1-d">
+            <div class="demo__bar">
+              <div class="demo__meta">
+                <span class="demo__title">Guarded slide-in (prefers no-preference)</span>
+                <span class="demo__timing">scrub-linked · cubic-bezier(0.16,1,0.3,1)</span>
+              </div>
+              <div class="demo__controls">
+                <div class="seg">
+                  <label for="st1-a">Auto</label>
+                  <label for="st1-l">Light</label>
+                  <label for="st1-d">Dark</label>
+                </div>
+                <span class="demo__loop">↻</span>
+              </div>
+            </div>
+            <div class="demo__stage">
+              <div class="ui-stack">
+                <div class="ui-badge">prefers-reduced-motion: no-preference</div>
+                <div class="demo-1__mt">
+                  <span class="ui-word">Dev.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINDING 3 — Important: x: -60 fixed -->
+        <div class="finding-row" data-sev="imp">
+          <div class="finding-row__prose">
+            <div class="find-tags">
+              <span class="sev-chip imp">Important</span>
+              <span class="lens-chip">Emil</span>
+              <span class="lens-chip">Jhey</span>
+            </div>
+            <h4 class="find-title">Fixed <code>x: -60</code> pixel offset doesn't scale with viewport</h4>
+            <div class="find-body">
+              <p><span class="label">What</span>The bigStatement enter and exit both use <code>x: -60</code> (absolute pixels).
+              On a 2560px display, -60px is barely 2% of the viewport — nearly imperceptible. On a 375px phone,
+              -60px is 16% of the screen, which may feel too large. The motion isn't anchored to the element's
+              own width or the viewport.</p>
+              <p><span class="label">Why it matters</span>Emil prizes motion that feels <em>native</em> to the
+              element — it should originate from its logical source. Jhey's palette includes CSS custom properties
+              and relative units that make motion scale naturally. A recruiter on an ultrawide monitor sees a
+              barely-perceptible twitch; a mobile reviewer sees a wide sweep. Neither is the intended cinematic
+              slide-in.</p>
+              <div class="fix">
+                <p><span class="label">Recommended motion</span>Replace <code>x: -60</code> with
+                <code>xPercent: -100</code> (slide in from 100% of the element's own width, off-screen to the left).
+                This scales with the element automatically. Pair with <code>overflow: hidden</code> on the parent
+                container so the element doesn't overflow the section during the enter.</p>
+              </div>
+              <p class="find-loc"><code>src/sections/About.jsx:38</code> (enter) · <code>src/sections/About.jsx:109</code> (exit)</p>
+            </div>
+          </div>
+          <!-- Demo 3 -->
+          <div class="demo">
+            <input class="vh" type="radio" name="st3" id="st3-a" checked>
+            <input class="vh" type="radio" name="st3" id="st3-l">
+            <input class="vh" type="radio" name="st3" id="st3-d">
+            <div class="demo__bar">
+              <div class="demo__meta">
+                <span class="demo__title">xPercent-based slide — scales with element width</span>
+                <span class="demo__timing">xPercent: -100 → 0 · ease-out-expo</span>
+              </div>
+              <div class="demo__controls">
+                <div class="seg">
+                  <label for="st3-a">Auto</label>
+                  <label for="st3-l">Light</label>
+                  <label for="st3-d">Dark</label>
+                </div>
+                <span class="demo__loop">↻</span>
+              </div>
+            </div>
+            <div class="demo__stage">
+              <div style="overflow: hidden; width: 100%;">
+                <div class="demo-3__mt">
+                  <span class="ui-word">Builder.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lens-take">
+        <strong>Through Emil's lens:</strong> The architecture is disciplined — scrub timelines, proper
+        cleanup, tight exit timing. The critical gap is the missing motion preference guard, which turns a
+        cinematic intro into an accessibility failure. Once that's patched, the only remaining Emil concern
+        is the fixed pixel offset; everything else serves the portfolio context where longer, more expressive
+        animations are warranted.
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 04 · JAKUB KREHEL ───────────────────────────────────────────── -->
+    <section class="lens-sec">
+      <div class="lens-sec__head">
+        <h3>Jakub Krehel — Production Polish</h3>
+        <span class="lens-sec__weight">Equal</span>
+      </div>
+      <div class="lens-sec__verdict">
+        <span class="verdict-dot imp"></span>
+        Concern — the enters are functional but lack the materialization quality that separates "animated" from "polished."
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">WHAT'S WORKING WELL</span>
+        <ul class="lens-list good">
+          <li><span class="marker">✓</span> SplitText masked enters (<code>overflow: hidden</code> wrapper per line) prevent visual bleed — production-grade implementation.</li>
+          <li><span class="marker">✓</span> <code>expo.out</code> on data-reveal has real easing personality; not a generic <code>ease</code>.</li>
+          <li><span class="marker">✓</span> Two-column exit symmetry (narrative up, bigStatement left) creates a composed, directional collapse.</li>
+          <li><span class="marker">✓</span> SplitText cleanup via <code>split.revert()</code> in the effect return — production-safe, no DOM leak.</li>
+        </ul>
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">ISSUES TO ADDRESS</span>
+
+        <!-- FINDING 2 — Important: no blur -->
+        <div class="finding-row" data-sev="imp">
+          <div class="finding-row__prose">
+            <div class="find-tags">
+              <span class="sev-chip imp">Important</span>
+              <span class="lens-chip">Jakub</span>
+            </div>
+            <h4 class="find-title">Enter animations lack blur — the "materializing" quality is missing</h4>
+            <div class="find-body">
+              <p><span class="label">What</span>Both enter animations (bigLines: <code>x + opacity</code>;
+              SplitText lines: <code>yPercent + opacity</code>) transition only position and opacity.
+              <code>filter: blur()</code> is absent from all enter states.</p>
+              <p><span class="label">Why it matters</span>Jakub's signature enter recipe adds a 4–8px blur
+              at the start state that animates to <code>blur(0)</code> as the element enters. This creates
+              a "materializing from thin air" quality — the element doesn't just appear and slide,
+              it resolves into focus. Without it, the enters feel mechanical: you see the element, then
+              it moves. With blur, you don't see the element, then it exists. The difference is subtle but
+              is exactly the gap between "this site has animations" and "this feels expensive."</p>
+              <div class="fix">
+                <p><span class="label">Recommended motion</span>Add <code>filter: 'blur(6px)'</code> to
+                the <code>gsap.set()</code> calls for <code>bigLines</code> and SplitText lines,
+                and animate to <code>filter: 'blur(0px)'</code> in the timeline <code>.to()</code>.
+                For scrub animations, ensure the blur resolves cleanly by the <code>end</code> breakpoint.
+                Note: <code>filter</code> is GPU-composited and won't cause layout thrash.</p>
+              </div>
+              <p class="find-loc"><code>src/sections/About.jsx:38</code> (bigLines set) · <code>src/sections/About.jsx:72</code> (SplitText set)</p>
+            </div>
+          </div>
+          <!-- Demo 2 -->
+          <div class="demo">
+            <input class="vh" type="radio" name="st2" id="st2-a" checked>
+            <input class="vh" type="radio" name="st2" id="st2-l">
+            <input class="vh" type="radio" name="st2" id="st2-d">
+            <div class="demo__bar">
+              <div class="demo__meta">
+                <span class="demo__title">Blur + opacity + translateY enter</span>
+                <span class="demo__timing">blur(6px)→0 · 300ms · ease-out-quint</span>
+              </div>
+              <div class="demo__controls">
+                <div class="seg">
+                  <label for="st2-a">Auto</label>
+                  <label for="st2-l">Light</label>
+                  <label for="st2-d">Dark</label>
+                </div>
+                <span class="demo__loop">↻</span>
+              </div>
+            </div>
+            <div class="demo__stage">
+              <div class="demo-2__mt">
+                <span class="ui-word">17 anos.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINDING 4 — Important: ease: none -->
+        <div class="finding-row" data-sev="imp">
+          <div class="finding-row__prose">
+            <div class="find-tags">
+              <span class="sev-chip imp">Important</span>
+              <span class="lens-chip">Jakub</span>
+              <span class="lens-chip">Emil</span>
+            </div>
+            <h4 class="find-title"><code>ease: 'none'</code> in both scrub timelines — motion maps linearly to scroll</h4>
+            <div class="find-body">
+              <p><span class="label">What</span>Both scrub timelines (<code>bigLines</code> and SplitText narrative)
+              use <code>ease: 'none'</code> in their <code>.to()</code> calls. In GSAP scrub mode, the easing
+              applied within the timeline controls the shape of the animation curve relative to scroll progress —
+              it's not about speed, it's about how the element "wants" to move as the user scrolls.</p>
+              <p><span class="label">Why it matters</span><code>ease: 'none'</code> produces a perfectly
+              mechanical linear mapping: 50% scroll progress = 50% animation progress. The element doesn't
+              accelerate or settle — it just translates in sync with scroll speed. Jakub's production polish
+              principle is that motion should feel like it has physical weight; <code>power1.inOut</code>
+              gives a gentle ease-in ease-out within the scrub range, making elements feel like they decelerate
+              into their resting position rather than stopping abruptly.</p>
+              <div class="fix">
+                <p><span class="label">Recommended motion</span>Change <code>ease: 'none'</code> to
+                <code>ease: 'power1.inOut'</code> in both scrub timelines. The user still controls the pace via
+                scroll; the easing controls the curve shape, adding organic feel. Test by scrolling slowly
+                through the section — elements should feel like they settle in, not click into place.</p>
+              </div>
+              <p class="find-loc"><code>src/sections/About.jsx:46</code> (bigLines timeline) · <code>src/sections/About.jsx:82</code> (SplitText timeline)</p>
+            </div>
+          </div>
+          <!-- Demo 4 -->
+          <div class="demo">
+            <input class="vh" type="radio" name="st4" id="st4-a" checked>
+            <input class="vh" type="radio" name="st4" id="st4-l">
+            <input class="vh" type="radio" name="st4" id="st4-d">
+            <div class="demo__bar">
+              <div class="demo__meta">
+                <span class="demo__title">Linear (current) vs power1.inOut (recommended)</span>
+                <span class="demo__timing">scrub proxy · ease: linear vs power1.inOut</span>
+              </div>
+              <div class="demo__controls">
+                <div class="seg">
+                  <label for="st4-a">Auto</label>
+                  <label for="st4-l">Light</label>
+                  <label for="st4-d">Dark</label>
+                </div>
+                <span class="demo__loop">↻</span>
+              </div>
+            </div>
+            <div class="demo__stage">
+              <div class="ui-stack" style="gap: 16px; align-items: flex-start;">
+                <div>
+                  <div class="ui-label" style="margin-bottom: 6px;">ease: none (current)</div>
+                  <div class="demo-4__mt-a"><span class="ui-word-sm">Comecei a programar</span></div>
+                </div>
+                <div>
+                  <div class="ui-label" style="margin-bottom: 6px;">power1.inOut (recommended)</div>
+                  <div class="demo-4__mt-b"><span class="ui-word-sm">Comecei a programar</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lens-take">
+        <strong>Through Jakub's lens:</strong> The implementation is clean and the SplitText masking technique
+        is production-grade — those details show craft. The missing blur layer is the biggest gap between
+        "this portfolio has good animations" and "this portfolio has polished animations." Adding it to the
+        enter states and switching from <code>ease: 'none'</code> to <code>ease: 'power1.inOut'</code>
+        in the scrub timelines would lift the section to a genuinely premium feel.
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 05 · JHEY TOMPKINS ─────────────────────────────────────────── -->
+    <section class="lens-sec">
+      <div class="lens-sec__head">
+        <h3>Jhey Tompkins — Experimentation &amp; Delight</h3>
+        <span class="lens-sec__weight">Equal</span>
+      </div>
+      <div class="lens-sec__verdict">
+        <span class="verdict-dot opp"></span>
+        Mixed — the scrub-driven structure is exactly the kind of inventive approach Jhey celebrates; it just stops before exploring what it could become.
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">WHAT'S WORKING WELL</span>
+        <ul class="lens-list good">
+          <li><span class="marker">✓</span> Scroll-driven enters tie animation pace to the reader's scroll speed — an elegant narrative device that Jhey would call "learning from scroll."</li>
+          <li><span class="marker">✓</span> Two-column staggered exit (bigLines ← left, narrative ↑ up) is compositionally interesting — different axes for different content types.</li>
+          <li><span class="marker">✓</span> Using <code>data-big-line</code> spans for manual line-by-line animation rather than forcing SplitText is a lateral solution Jhey would appreciate.</li>
+        </ul>
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">ISSUES TO ADDRESS</span>
+        <p class="lens-empty">No issues at this severity level from Jhey's perspective. Primary concerns are in Emil and Jakub's sections.</p>
+      </div>
+
+      <div class="lens-block">
+        <span class="mono-label">OPPORTUNITIES</span>
+        <ul class="lens-list opp">
+          <li>
+            <span class="marker">💡</span>
+            <span><strong>Widen the scrub range</strong> from 17% to ~40% viewport height.
+            The current <code>start: 'top 85%', end: 'top 68%'</code> gives each element less than 5% of the page
+            to land — the stagger of 4 elements at <code>0.2</code> each is cramped. Jhey would push for
+            <code>start: 'top 90%', end: 'top 50%'</code> to give the reveal more cinematic breathing room.
+            — <code>src/sections/About.jsx:42–44</code></span>
+          </li>
+          <li>
+            <span class="marker">💡</span>
+            <span><strong>Use <code>xPercent</code> instead of <code>x: -60</code></strong> for relative,
+            element-width-relative motion (also flagged by Emil above). Jhey would go further: consider
+            a CSS custom property <code>--slide-dist: -6rem</code> that can be overridden at breakpoints,
+            making the motion adaptive to the layout context.
+            — <code>src/sections/About.jsx:38</code></span>
+          </li>
+          <li>
+            <span class="marker">💡</span>
+            <span><strong>Consider symmetry between enter and exit</strong> — the enter uses <code>scrub</code>
+            (user-paced) while the exit uses <code>toggleActions</code> (time-based). This creates an
+            intentional asymmetry: "scroll in slowly, snap out quickly." If that contrast is intentional,
+            keep it. If not, either scrub the exit or add a brief scrub window at the section's bottom edge
+            for a mirrored feel. — <code>src/sections/About.jsx:94–115</code></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="lens-take">
+        <strong>Through Jhey's lens:</strong> The scroll-driven architecture is genuinely inventive for a
+        portfolio — it's asking "what if the reader's scroll IS the animation controller?" That's the right
+        question. The current implementation answers it conservatively. Widening the scrub range, making the
+        offset percentage-based, and exploring what an eased scrub curve feels like would push it from
+        "good motion" to "motion that makes you scroll back up to see it again."
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ── 06 · COMBINED RECOMMENDATIONS ──────────────────────────────── -->
+    <p class="section-heading">06 · COMBINED RECOMMENDATIONS</p>
+
+    <!-- Critical -->
+    <div class="rec-tier" id="rec-crit">
+      <div class="tier-label crit">Critical · must fix</div>
+      <div class="tier-count">1 finding</div>
+      <table class="rec-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Issue</th>
+            <th>File</th>
+            <th>Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🔴</td>
+            <td>No <code>prefers-reduced-motion</code> guard on any GSAP animation</td>
+            <td><code>About.jsx:12</code></td>
+            <td>Check <code>window.matchMedia('(prefers-reduced-motion: reduce)').matches</code> at top of useEffect; <code>gsap.set()</code> all elements to final state and return early when true</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Important -->
+    <div class="rec-tier" id="rec-imp">
+      <div class="tier-label imp">Important · should fix</div>
+      <div class="tier-count">3 findings</div>
+      <table class="rec-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Issue</th>
+            <th>File</th>
+            <th>Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🟡</td>
+            <td>Enter animations lack blur — "materializing" quality missing (Jakub)</td>
+            <td><code>About.jsx:38, 72</code></td>
+            <td>Add <code>filter: 'blur(6px)'</code> to <code>gsap.set()</code> calls; animate to <code>filter: 'blur(0px)'</code> in both scrub timelines</td>
+          </tr>
+          <tr>
+            <td>🟡</td>
+            <td>Fixed <code>x: -60</code> px offset doesn't scale across viewports (Emil + Jhey)</td>
+            <td><code>About.jsx:38, 109</code></td>
+            <td>Replace with <code>xPercent: -100</code>; add <code>overflow: 'hidden'</code> on <code>.titleCol</code> wrapper</td>
+          </tr>
+          <tr>
+            <td>🟡</td>
+            <td><code>ease: 'none'</code> in scrub timelines — linear, mechanical feel (Jakub)</td>
+            <td><code>About.jsx:46, 82</code></td>
+            <td>Change to <code>ease: 'power1.inOut'</code> in both scrub <code>.to()</code> calls</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Opportunities -->
+    <div class="rec-tier" id="rec-opp">
+      <div class="tier-label opp">Opportunities · could enhance</div>
+      <div class="tier-count">3 findings</div>
+      <table class="rec-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Enhancement</th>
+            <th>Where</th>
+            <th>Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🟢</td>
+            <td>Widen scrub range from 17% to ~40% viewport height</td>
+            <td><code>About.jsx:42–44</code></td>
+            <td>More cinematic breathing room for the 4-item stagger; less rushed reveal</td>
+          </tr>
+          <tr>
+            <td>🟢</td>
+            <td>Use CSS custom property for slide distance (<code>--slide-dist</code>) instead of hardcoded offset</td>
+            <td><code>About.jsx:38</code></td>
+            <td>Allows breakpoint overrides without touching JS; self-documenting intent</td>
+          </tr>
+          <tr>
+            <td>🟢</td>
+            <td>Evaluate enter (scrub) vs exit (toggleActions) asymmetry — intentional or not?</td>
+            <td><code>About.jsx:94–115</code></td>
+            <td>If intentional contrast, add a comment; if not, scrub the exit for symmetric feel</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 07 · LENS REFERENCE SUMMARY ────────────────────────────────── -->
+    <p class="section-heading">07 · LENS REFERENCE SUMMARY</p>
+    <div class="ref-summary">
+      <p style="font-size: 14px; color: var(--paper-dim); margin-bottom: 16px;">
+        <strong style="color: var(--paper);">Lens used most: Emil Kowalski — Restraint &amp; Speed.</strong><br>
+        The critical accessibility finding anchors this audit in Emil's framework: "should this animate at all,
+        and if so, does it serve everyone?" Emil's frequency rule (portfolio = occasional view) permits the
+        longer durations and expressive motion; his accessibility mandate is non-negotiable.
+      </p>
+      <div class="ref-lean">
+        <div class="ref-lean-item">
+          <strong>To lean more Emil:</strong>
+          Cap data-reveal to 600ms. Add a reduced-motion guard that crossfades-only (opacity only, no position change).
+          Question whether the exit animation is necessary at all — Emil would ask how often a user scrolls back up.
+        </div>
+        <div class="ref-lean-item">
+          <strong>To lean more Jakub:</strong>
+          Add blur to every enter transition. Consider a subtle <code>box-shadow</code> glow on the "Builder." accent
+          as it enters. Ensure the stagger timing reads as a single composed gesture, not individual-element reveals.
+        </div>
+        <div class="ref-lean-item">
+          <strong>To lean more Jhey:</strong>
+          Use <code>@property</code> to animate a CSS custom property for the slide distance, so the value is
+          typed and interpolable. Experiment with a scroll-driven exit to mirror the enter. Consider a subtle
+          <code>clip-path</code> reveal as an alternative to <code>yPercent</code> for the SplitText lines.
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <span>portf-lio-pro</span>
+      &nbsp;·&nbsp;
+      <span>🔴 1 Critical</span>
+      &nbsp;·&nbsp;
+      <span>🟡 3 Important</span>
+      &nbsp;·&nbsp;
+      <span>🟢 3 Opportunities</span>
+      &nbsp;·&nbsp;
+      <span>2026-06-22</span>
+    </footer>
+
+  </div>
+</body>
+</html>

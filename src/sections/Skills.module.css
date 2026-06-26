@@ -1,15 +1,183 @@
-.skills {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3xl) var(--spacing-lg);
-  background: transparent;
+.section {
   position: relative;
   z-index: 1;
+  padding: 8rem 0;
 }
 
-.placeholder {
-  color: var(--color-text-secondary);
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+.label {
+  display: block;
+  width: fit-content;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #06B6D4;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.label::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #06B6D4;
+  margin-top: 0.4rem;
+  opacity: 0.6;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.5rem);
+  font-weight: 700;
+  color: #F8FAFC;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0 0 3rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin-bottom: 2.5rem;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #475569;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+  outline: none;
+}
+
+.tab:hover {
+  color: #94A3B8;
+}
+
+.tabActive {
+  color: #F8FAFC;
+}
+
+.tabLabel {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Badge "Formação" — sutil, apenas borda ciano com opacidade reduzida */
+.badge {
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: #06B6D4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  opacity: 0.65;
+}
+
+/* Indicador da aba ativa — sublinhado ciano animado pelo Framer Motion layoutId */
+.activeIndicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #06B6D4;
+  border-radius: 1px;
+}
+
+/* Painel de conteúdo */
+.panel {
+  min-height: 160px;
+}
+
+.context {
+  font-family: var(--font-body);
   font-size: 0.9rem;
+  color: #94A3B8;
+  line-height: 1.75;
+  margin: 0 0 1.75rem;
+  max-width: 560px;
+}
+
+/* Grid de tags de tecnologia */
+.techGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.techTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #CBD5E1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.45rem 0.9rem;
+  border-radius: 4px;
+  letter-spacing: 0.01em;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.techIcon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.techTag:hover {
+  border-color: rgba(6, 182, 212, 0.35);
+  color: #F8FAFC;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 5rem 0;
+  }
+
+  .title {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    margin-bottom: 2rem;
+  }
+
+  .tab {
+    padding: 0.75rem 1rem;
+  }
+
+  .tabLabel {
+    font-size: 0.78rem;
+  }
 }

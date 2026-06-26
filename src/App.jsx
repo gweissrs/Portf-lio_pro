@@ -1,25 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { setLenis } from './lib/lenisInstance';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
-import { Hero } from './sections/Hero';
-import { About } from './sections/About';
-import { Projects } from './sections/Projects';
-import { Skills } from './sections/Skills';
-import { Experience } from './sections/Experience';
-import { Showcase } from './sections/Showcase';
-import { Contact } from './sections/Contact';
 import { GlobalBackground } from './components/ui/GlobalBackground';
 import { CustomCursor } from './components/ui/CustomCursor';
+import { ScrollToTop } from './components/ui/ScrollToTop';
+import { Home } from './pages/Home';
+import { ProjectCase } from './pages/ProjectCase';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
-  const [bootDone, setBootDone] = useState(false);
+  const location = useLocation()
+  const [bootDone, setBootDone] = useState(() => sessionStorage.getItem('bootDone') === 'true');
   const mousePos       = useRef(null);
-  const revealProgress = useRef(0);
+  const revealProgress = useRef(sessionStorage.getItem('bootDone') === 'true' ? 1 : 0);
 
   useEffect(() => {
     const handler = (e) => {
@@ -40,6 +40,7 @@ export default function App() {
       touchMultiplier: 1.5,
     });
 
+    setLenis(lenis);
     lenis.on('scroll', ScrollTrigger.update);
 
     const ticker = (time) => lenis.raf(time * 1000);
@@ -47,6 +48,7 @@ export default function App() {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      setLenis(null);
       lenis.destroy();
       gsap.ticker.remove(ticker);
     };
@@ -54,22 +56,28 @@ export default function App() {
 
   return (
     <>
+      <ScrollToTop />
       <CustomCursor />
       <GlobalBackground />
       <Navbar isBooting={!bootDone} />
-      <main>
-        <Hero
-          onBootComplete={() => setBootDone(true)}
-          revealProgress={revealProgress}
-          mousePos={mousePos}
-        />
-        <About />
-        <Projects />
-        <Skills />
-        <Experience />
-        <Showcase />
-        <Contact />
-      </main>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={
+              <Home
+                onBootComplete={() => {
+                  sessionStorage.setItem('bootDone', 'true')
+                  setBootDone(true)
+                }}
+                revealProgress={revealProgress}
+                mousePos={mousePos}
+              />
+            }
+          />
+          <Route path="/projetos/:id" element={<ProjectCase />} />
+        </Routes>
+      </AnimatePresence>
       <Footer />
     </>
   );

@@ -1,0 +1,9 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [
+      "motion-audits/portf-lio-pro-experience-2026-06-26.html"
+    ],
+    "ignoreValues": []
+  }
+}

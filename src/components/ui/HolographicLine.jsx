@@ -1,5 +1,18 @@
 import { useRef, useEffect } from 'react';
 
+// Melhoria 1: path suave via midpoint quadratic — evita segmentos poligonais visíveis em HiDPI
+function buildSmoothPath(ctx, points) {
+  if (points.length < 2) return;
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length - 1; i++) {
+    const midX = (points[i].x + points[i + 1].x) / 2;
+    const midY = (points[i].y + points[i + 1].y) / 2;
+    ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+  }
+  const last = points[points.length - 1];
+  ctx.lineTo(last.x, last.y);
+}
+
 export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
   const canvasRef = useRef(null);
 
@@ -10,6 +23,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
     let animId;
     let time = 0;
     let currentAmp = 60;
+    let prevAmp    = 60; // Melhoria 4: rastrear variação frame-a-frame
 
     const particles = Array.from({ length: 40 }, () => {
       const yOffset = (Math.random() - 0.5) * 50;
@@ -53,7 +67,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
     function drawPremiumLine({
       localP, baseYRatio, amp, phaseOffset,
       speed, lineWidth, colorCenter, colorEdge,
-      glowColor, opacity,
+      glowColor, opacity, energyBoost = 0,
     }) {
       if (localP <= 0) return;
 
@@ -79,42 +93,62 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
       grad.addColorStop(0.94, colorEdge);
       grad.addColorStop(1,    'transparent');
 
-      // CAMADA 1 — Bloom largo e difuso
-      ctx.save();
-      ctx.globalAlpha = opacity * 0.15;
-      ctx.lineWidth   = lineWidth * 8;
-      ctx.strokeStyle = glowColor;
-      ctx.filter      = 'blur(8px)';
-      ctx.beginPath();
-      points.forEach(({ x, y }, i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-      ctx.stroke();
-      ctx.filter = 'none';
-      ctx.restore();
+      // CAMADAS DE GLOW (1-4) — decaimento exponencial, mais difuso ao mais nítido
+      // Melhoria 2: substitui as 2 camadas anteriores por 4 com alpha/blur calibrados
+      const glowLayers = [
+        { blurPx: 16, widthMult: 12, alphaMult: 0.05 },
+        { blurPx: 10, widthMult: 7,  alphaMult: 0.09 },
+        { blurPx: 5,  widthMult: 4,  alphaMult: 0.16 },
+        { blurPx: 2,  widthMult: 2,  alphaMult: 0.28 },
+      ];
 
-      // CAMADA 2 — Halo médio
-      ctx.save();
-      ctx.globalAlpha = opacity * 0.3;
-      ctx.lineWidth   = lineWidth * 3;
-      ctx.strokeStyle = glowColor;
-      ctx.filter      = 'blur(3px)';
-      ctx.beginPath();
-      points.forEach(({ x, y }, i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-      ctx.stroke();
-      ctx.filter = 'none';
-      ctx.restore();
+      for (let gi = 0; gi < glowLayers.length; gi++) {
+        const layer = glowLayers[gi];
+        // Melhoria 4: energyBoost amplifica camada mais nítida (última) em até +40%
+        const effectiveAlpha = gi === glowLayers.length - 1
+          ? layer.alphaMult * (1 + energyBoost * 0.4)
+          : layer.alphaMult;
 
-      // CAMADA 3 — Linha principal nítida com espessura variável
+        ctx.save();
+        ctx.globalAlpha = opacity * effectiveAlpha;
+        ctx.lineWidth   = lineWidth * layer.widthMult;
+        ctx.strokeStyle = glowColor;
+        ctx.filter      = `blur(${layer.blurPx}px)`;
+        ctx.beginPath();
+        buildSmoothPath(ctx, points); // Melhoria 1: quadratic suave
+        ctx.stroke();
+        ctx.filter = 'none';
+        ctx.restore();
+      }
+
+      // CAMADA NÍTIDA — linha principal com espessura variável + curva suave
       ctx.save();
       ctx.strokeStyle = grad;
+      ctx.lineCap     = 'round';
       for (let i = 1; i < points.length; i++) {
-        const { x: x1, y: y1 }        = points[i - 1];
-        const { x: x2, y: y2, t: t2 } = points[i];
-        const centerFactor = 1 - Math.abs(t2 - 0.5) * 1.5;
+        const prev = points[i - 1];
+        const curr = points[i];
+
+        // Melhoria 3: ease-in-out na variação de espessura central (era linear)
+        const linearFactor = 1 - Math.abs(curr.t - 0.5) * 1.5;
+        const centerFactor = linearFactor < 0.5
+          ? 2 * linearFactor * linearFactor
+          : 1 - Math.pow(-2 * linearFactor + 2, 2) / 2;
+
         ctx.lineWidth   = lineWidth * Math.max(0.3, centerFactor);
-        ctx.globalAlpha = Math.min(1, (t2 / 0.06) * opacity);
+        ctx.globalAlpha = Math.min(1, (curr.t / 0.06) * opacity);
         ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
+        ctx.moveTo(prev.x, prev.y);
+
+        // Melhoria 1: quadratic para cada segmento — sem arestas poligonais
+        if (i < points.length - 1) {
+          const next = points[i + 1];
+          const midX = (curr.x + next.x) / 2;
+          const midY = (curr.y + next.y) / 2;
+          ctx.quadraticCurveTo(curr.x, curr.y, midX, midY);
+        } else {
+          ctx.lineTo(curr.x, curr.y);
+        }
         ctx.stroke();
       }
       ctx.restore();
@@ -131,7 +165,12 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
       const mouseNearLine = Math.abs(my - h * 0.76) < 80;
 
       const targetAmp = isCtaHover ? 140 : mouseNearLine ? 80 : 60;
+
+      // Melhoria 4: capturar delta de amplitude para energyBoost
+      prevAmp     = currentAmp;
       currentAmp += (targetAmp - currentAmp) * 0.05;
+      const ampDelta    = Math.abs(currentAmp - prevAmp);
+      const energyBoost = ampDelta > 0.3 ? Math.min(1, ampDelta / 5) : 0;
 
       // LINHA 1 — Principal, próxima, mais rápida
       drawPremiumLine({
@@ -145,6 +184,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
         colorEdge:   '#06B6D4',
         glowColor:   '#06B6D4',
         opacity:     0.9,
+        energyBoost,
       });
 
       // LINHA 2 — Média, velocidade intermediária
@@ -176,7 +216,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
         opacity:     0.22,
       });
 
-      // Partículas da fase C
+      // Partículas da fase C — INALTERADO
       if (phaseC > 0.2) {
         const particleFade = Math.min(1, (phaseC - 0.2) / 0.4);
         const mx  = mousePos?.current?.x ?? -9999;

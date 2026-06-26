@@ -9,8 +9,12 @@ import styles from './Hero.module.css';
 
 gsap.registerPlugin(SplitText);
 
+// Persiste entre navegações SPA sem resetar no refresh
+let _heroHasRendered = false;
+
 export function Hero({ onBootComplete, revealProgress, mousePos }) {
-  const [bootDone, setBootDone] = useState(false);
+  const [bootDone, setBootDone] = useState(() => sessionStorage.getItem('bootDone') === 'true');
+  const isFirstRender = useRef(!_heroHasRendered);
 
   const sectionRef   = useRef(null);
   const badgeRef     = useRef(null);
@@ -21,6 +25,10 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
   const ctasRef      = useRef(null);
   const scrollRef    = useRef(null);
   const ctaHovering  = useRef(false);
+
+  useEffect(() => {
+    _heroHasRendered = true;
+  }, []);
 
   useEffect(() => {
     const ctaEl = ctasRef.current;
@@ -37,6 +45,40 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
 
   useEffect(() => {
     if (!bootDone) return;
+
+    // Retornando de navegação — mostrar tudo imediatamente sem animação
+    if (!isFirstRender.current) {
+      revealProgress.current = 1
+
+      const show = (el) => {
+        if (!el) return
+        el.style.opacity = '1'
+        el.style.transform = 'none'
+        el.style.filter = 'none'
+        el.style.clipPath = 'none'
+      }
+
+      requestAnimationFrame(() => {
+        const contentEl = sectionRef.current?.querySelector(`.${styles.content}`)
+        if (contentEl) contentEl.style.opacity = '1'
+
+        show(badgeRef.current)
+        show(jobTitleRef.current)
+        show(locationRef.current)
+        show(phraseRef.current)
+        show(ctasRef.current)
+        show(scrollRef.current)
+
+        if (nameRef.current) {
+          nameRef.current.style.opacity = '1'
+          nameRef.current.textContent = 'Guilherme Weiss'
+        }
+
+        onBootComplete?.()
+      })
+
+      return
+    }
 
     revealProgress.current = 0;
 
@@ -179,7 +221,10 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
   return (
     <>
       {!bootDone && (
-        <BootSequence onComplete={() => setBootDone(true)} />
+        <BootSequence onComplete={() => {
+          sessionStorage.setItem('bootDone', 'true')
+          setBootDone(true)
+        }} />
       )}
 
       <section ref={sectionRef} id="hero" className={styles.hero} aria-label="Início">
