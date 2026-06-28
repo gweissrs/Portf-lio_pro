@@ -1,6 +1,8 @@
 .section {
   position: relative;
   z-index: 1;
+  padding-top: 8rem;
+  padding-bottom: 2rem;
 }
 
 .container {
@@ -101,7 +103,7 @@
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: 5rem;
-  align-items: start;
+  align-items: center;
   margin-bottom: 6rem;
   padding-top: 4rem;
 }
@@ -110,16 +112,18 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding-top: 1.5rem;
 }
 
 .lead {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-size: clamp(0.82rem, 1.25vw, 1.05rem);
   font-weight: 600;
   color: #F8FAFC;
   letter-spacing: -0.01em;
   line-height: 1.4;
   margin: 0;
+  white-space: nowrap;
   overflow: hidden;
 }
 

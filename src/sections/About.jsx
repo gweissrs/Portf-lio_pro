@@ -126,8 +126,6 @@ export function About() {
   return (
     <section ref={sectionRef} id="sobre" className={styles.section}>
 
-      <div className={styles.opening} />
-
       <div className={styles.container}>
         <div className={styles.body}>
 
@@ -166,12 +164,6 @@ export function About() {
               meu aprendizado. O que me motiva é resolver problemas
               reais, sempre pensando na experiência de quem vai usar.
             </p>
-            <div className={styles.availability} data-reveal="up" data-delay="0.42">
-              <span className={styles.availDot} />
-              <span className={styles.availText}>
-                Disponível para estágio · Florianópolis, SC
-              </span>
-            </div>
           </div>
 
         </div>
