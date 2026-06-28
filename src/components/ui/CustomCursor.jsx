@@ -9,6 +9,7 @@ import styles from './CustomCursor.module.css'
 
 export function CustomCursor() {
   const cursorRef = useRef(null)
+  const labelRef  = useRef(null)
   const posRef = useRef({ x: -100, y: -100 })
   const curRef = useRef({ x: -100, y: -100 })
   const previewModeRef = useRef(false)
@@ -20,9 +21,13 @@ export function CustomCursor() {
     let animId
     const animate = () => {
       const ease = previewModeRef.current ? 0.08 : 0.15
-      curRef.current.x += (posRef.current.x - curRef.current.x) * ease
-      curRef.current.y += (posRef.current.y - curRef.current.y) * ease
-      cursor.style.transform = `translate(${curRef.current.x}px, ${curRef.current.y}px)`
+      const dx = posRef.current.x - curRef.current.x
+      const dy = posRef.current.y - curRef.current.y
+      if (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05) {
+        curRef.current.x += dx * ease
+        curRef.current.y += dy * ease
+        cursor.style.transform = `translate(${curRef.current.x}px, ${curRef.current.y}px)`
+      }
       animId = requestAnimationFrame(animate)
     }
 
@@ -48,10 +53,14 @@ export function CustomCursor() {
     })
 
     const onPreview = (e) => {
-      const { active } = e.detail
+      const { active, label } = e.detail
       if (!cursor) return
 
       previewModeRef.current = active
+
+      if (labelRef.current) {
+        labelRef.current.textContent = label || 'Ver projeto'
+      }
 
       if (active) {
         cursor.classList.remove(styles.expanded)
@@ -81,7 +90,7 @@ export function CustomCursor() {
     <div ref={cursorRef} className={styles.cursor}>
       <div className={styles.cursorLens} />
       <div className={styles.cursorPreviewBg} />
-      <span className={styles.cursorLabel}>Ver projeto</span>
+      <span ref={labelRef} className={styles.cursorLabel}>Ver projeto</span>
     </div>
   )
 }

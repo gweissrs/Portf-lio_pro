@@ -5,47 +5,46 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './Experience.module.css'
 
-gsap.registerPlugin(ScrollTrigger)
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const ITEMS = [
   {
-    id: '01', empresa: 'Coana', tipo: 'Freelance', periodo: '2025–2026',
+    id: '01', empresa: 'Coana', tipo: 'Freelance', periodo: '2026',
     papel: 'Desenvolvedor Frontend Freelance',
     entregas: [
       'PayReminder — sistema de cobrança automatizada em produção',
       'Sistema Feirao SP — B2B para Consulfarma 2026 (Anhembi, SP)',
       'Offline-first, 97 produtos reais, notificação por email via Edge Function',
     ],
-    aprendizado: 'Decisão de arquitetura não é abstração — é o que separa um sistema que funciona de um que trava na hora errada.',
+    aprendizado: 'Quando o cliente ligou porque o sistema parou, entendi o que \'em produção\' realmente significa.',
   },
   {
-    id: '02', empresa: 'SESI SENAI', tipo: 'Formal', periodo: '2025–2026 (em andamento)',
+    id: '02', empresa: 'SESI SENAI', tipo: 'Formal', periodo: '2024–presente',
     papel: 'Técnico em TI — Integrado ao Ensino Médio',
     entregas: [
       'SmartNotes — full stack em produção (Node.js + Express + PostgreSQL)',
-      'Rinha SENAI 2026 — gateway com 200 transações concorrentes sob stress',
+      'Rinha SENAI 2026 — gateway que aguentou 1000 requisições concorrentes sob stress',
     ],
-    aprendizado: 'No hackathon, o juiz era uma máquina. Meu código ou passava no stress test ou não passava.',
+    aprendizado: 'Tarefa toda semana, sistema pra entregar, prazo real. Se não funciona, não passa. O SENAI não simula pressão, ele aplica pressão.',
   },
   {
-    id: '03', empresa: 'Hospital Baía Sul', tipo: 'Formal', periodo: '2025–2026 (em andamento)',
+    id: '03', empresa: 'Hospital Baía Sul', tipo: 'Formal', periodo: '2025–presente',
     papel: 'Menor Aprendiz — Suprimentos / CAF',
     entregas: [
       'Operação de setor em ambiente hospitalar de alta exigência',
       'Rotina profissional paralela ao curso técnico e freelas',
     ],
-    aprendizado: 'Rotina e responsabilidade numa operação crítica — o que ambiente profissional real significa.',
+    aprendizado: 'Se eu etiquetar um remédio errado, alguém se machuca. Foi o primeiro lugar onde erro não tem git revert.',
   },
   {
-    id: '04', empresa: 'William Weiss', tipo: 'Freelance', periodo: '2025',
+    id: '04', empresa: 'William Weiss', tipo: 'Freelance', periodo: '2026',
     papel: 'Desenvolvedor Web & Estratégia de Conteúdo',
     entregas: [
       'Landing page que gerou novos clientes para agente Santander PJ',
       'Estratégia de conteúdo e presença Instagram PJ',
     ],
-    aprendizado: 'Código sem estratégia de negócio não resolve problema de cliente.',
+    aprendizado: 'Quando o marketing funcionou antes do previsto, entendi que código é só o começo.',
   },
 ]
 
@@ -477,39 +476,50 @@ export function Experience() {
 
     // ── rAF loop — continuous helix shimmer (skipped when prefers-reduced-motion)
     let rafId = null
-    if (!prefersReducedMotion) {
-      const tick = () => {
-        timeRef.current += 0.003
+    let helixVisible = false
 
-        // Particle: currentYOffset converges to baseYOffset each frame
+    const tick = () => {
+      timeRef.current += 0.003
+
+      HELIX_PARTICLES.forEach(p => {
+        p.currentYOffset += (p.baseYOffset - p.currentYOffset) * 0.04
+        p.dispX *= 0.985
+        p.dispY *= 0.985
+      })
+
+      pulseTimerRef.current += 0.003
+      if (pulseTimerRef.current >= 4.0) {
+        pulseTimerRef.current = 0
         HELIX_PARTICLES.forEach(p => {
-          p.currentYOffset += (p.baseYOffset - p.currentYOffset) * 0.04
-          p.dispX *= 0.985
-          p.dispY *= 0.985
+          p.exploding    = true
+          p.explodeTimer = 0.8
+          const angle    = Math.random() * Math.PI * 2
+          const force    = 1.5 + Math.random() * 3
+          p.explodeVx    = Math.cos(angle) * force
+          p.explodeVy    = Math.sin(angle) * force
         })
-
-        // Pulse explosion every 4 seconds
-        pulseTimerRef.current += 0.003
-        if (pulseTimerRef.current >= 4.0) {
-          pulseTimerRef.current = 0
-          HELIX_PARTICLES.forEach(p => {
-            p.exploding    = true
-            p.explodeTimer = 0.8
-            const angle    = Math.random() * Math.PI * 2
-            const force    = 1.5 + Math.random() * 3
-            p.explodeVx    = Math.cos(angle) * force
-            p.explodeVy    = Math.sin(angle) * force
-          })
-        }
-
-        const lc = canvasLinesRef.current
-        if (lc) {
-          const helixProgress = Math.max(0, Math.min(1, (revealRef.current - 0.05) / 0.90))
-          drawAllHelices(lc.getContext('2d'), lc, helixProgress, timeRef.current, mousePosRef.current)
-        }
-        rafId = requestAnimationFrame(tick)
       }
-      rafId = requestAnimationFrame(tick)
+
+      const lc = canvasLinesRef.current
+      if (lc) {
+        const helixProgress = Math.max(0, Math.min(1, (revealRef.current - 0.05) / 0.90))
+        drawAllHelices(lc.getContext('2d'), lc, helixProgress, timeRef.current, mousePosRef.current)
+      }
+      if (helixVisible) rafId = requestAnimationFrame(tick)
+    }
+
+    let helixIO = null
+    if (!prefersReducedMotion) {
+      helixIO = new IntersectionObserver(([entry]) => {
+        helixVisible = entry.isIntersecting
+        if (helixVisible && !rafId) {
+          rafId = requestAnimationFrame(tick)
+        } else if (!helixVisible && rafId) {
+          cancelAnimationFrame(rafId)
+          rafId = null
+        }
+      }, { threshold: 0 })
+      helixIO.observe(canvas)
     }
 
     // ── Raycaster — hover em nós já revelados pela hélice
@@ -558,6 +568,7 @@ export function Experience() {
     return () => {
       st.kill()
       if (rafId !== null) cancelAnimationFrame(rafId)
+      if (helixIO) helixIO.disconnect()
       ro.disconnect()
       canvas.removeEventListener('mousemove', onMouseMove)
       renderer.dispose()
@@ -682,7 +693,10 @@ export function Experience() {
                     >
                       {[
                         <h3   key="emp"  className={styles.nodeEmpresa}>{item.empresa}</h3>,
-                        <span key="meta" className={styles.nodeMeta}>{item.tipo} · {item.papel} · {item.periodo}</span>,
+                        <div key="meta" className={styles.nodeMeta}>
+                          <span className={styles.nodeMetaPapel}>{item.papel}</span>
+                          <span className={styles.nodeMetaSub}>{item.tipo} · {item.periodo}</span>
+                        </div>,
                         <div  key="div"  className={styles.nodeDivider} />,
                         <ul   key="list" className={styles.nodeEntregas}>
                           {item.entregas.map((e, j) => <li key={j}>{e}</li>)}

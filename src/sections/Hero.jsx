@@ -162,8 +162,8 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
 
           // 2. JOB TITLE — letter-spacing collapse
           tl.fromTo(jobTitleRef.current,
-            { opacity: 0, letterSpacing: '0.5em', filter: 'blur(4px)' },
-            { opacity: 1, letterSpacing: '0.01em', filter: 'blur(0px)', duration: 1.0, ease: 'power4.out' }
+            { opacity: 0, letterSpacing: '0.5em' },
+            { opacity: 1, letterSpacing: '0.01em', duration: 1.0, ease: 'power4.out' }
           );
 
           // 3. BADGE — sobe de baixo, simultâneo com jobTitle
@@ -182,8 +182,8 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
 
           // 5. PHRASE — scale + blur reveal
           tl.fromTo(phraseRef.current,
-            { opacity: 0, scale: 1.04, filter: 'blur(6px)', y: 8 },
-            { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0, duration: 0.9, ease: 'power2.out' },
+            { opacity: 0, scale: 1.04, y: 8 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: 'power2.out' },
             '-=0.3'
           );
 
@@ -262,8 +262,8 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
             </Button>
             <Button
               variant="outline"
-              href="/cv-guilherme-weiss.pdf"
-              target="_blank"
+              href="/curriculo_gw/CV_Guilherme_Weiss.pdf"
+              download="CV_Guilherme_Weiss.pdf"
               aria-label="Baixar currículo em PDF"
             >
               Baixar CV

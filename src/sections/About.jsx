@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 import styles from './About.module.css'
 
-gsap.registerPlugin(ScrollTrigger, SplitText)
+gsap.registerPlugin(SplitText)
 
 export function About() {
   const sectionRef = useRef(null)
@@ -105,14 +105,13 @@ export function About() {
           ease:     'power3.in',
           stagger:  0.04,
         })
-      gsap.timeline({ scrollTrigger: exitConfig })
         .to(bigLines, {
           x:        -60,
           opacity:  0,
           duration: 0.35,
           ease:     'power3.in',
           stagger:  0.04,
-        })
+        }, 0)
 
     }, sectionRef)
 

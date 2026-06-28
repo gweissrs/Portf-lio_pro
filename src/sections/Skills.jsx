@@ -5,11 +5,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   SiReact, SiJavascript, SiHtml5, SiCss, SiVite,
   SiNodedotjs, SiExpress, SiPostgresql, SiGit,
-  SiRailway, SiNetlify, SiVercel, SiMysql,
+  SiRailway, SiNetlify, SiVercel, SiMysql, SiPrisma,
 } from 'react-icons/si'
 import styles from './Skills.module.css'
 
-gsap.registerPlugin(ScrollTrigger)
 
 const TECH_ICONS = {
   'React':                      SiReact,
@@ -26,6 +25,7 @@ const TECH_ICONS = {
   'Netlify':                    SiNetlify,
   'Vercel':                     SiVercel,
   'MySQL':                      SiMysql,
+  'Prisma':                     SiPrisma,
 }
 
 const CATEGORIES = [
@@ -39,7 +39,7 @@ const CATEGORIES = [
   {
     id: 'backend',
     label: 'Backend & Dados',
-    tech: ['Node.js', 'Express', 'PostgreSQL', 'PgAdmin', 'Git'],
+    tech: ['Node.js', 'Express', 'PostgreSQL', 'PgAdmin', 'Prisma', 'Git'],
     context: 'Stack completo aplicado em produção no SmartNotes, da modelagem do banco à API.',
     badge: null,
   },

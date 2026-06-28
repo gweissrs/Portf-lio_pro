@@ -4,7 +4,6 @@ import { About } from '../sections/About'
 import { Projects } from '../sections/Projects'
 import { Skills } from '../sections/Skills'
 import { Experience } from '../sections/Experience'
-import { Showcase } from '../sections/Showcase'
 import { Contact } from '../sections/Contact'
 
 export function Home({ onBootComplete, revealProgress, mousePos }) {
@@ -23,8 +22,7 @@ export function Home({ onBootComplete, revealProgress, mousePos }) {
       <Projects />
       <Skills />
       <Experience />
-      <Showcase />
-      <Contact />
+      <Contact mousePos={mousePos} />
     </motion.main>
   )
 }

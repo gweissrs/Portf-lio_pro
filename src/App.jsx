@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { setLenis } from './lib/lenisInstance';
 import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
 import { GlobalBackground } from './components/ui/GlobalBackground';
 import { CustomCursor } from './components/ui/CustomCursor';
 import { ScrollToTop } from './components/ui/ScrollToTop';
@@ -45,7 +44,7 @@ export default function App() {
 
     const ticker = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(ticker);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
 
     return () => {
       setLenis(null);
@@ -78,7 +77,6 @@ export default function App() {
           <Route path="/projetos/:id" element={<ProjectCase />} />
         </Routes>
       </AnimatePresence>
-      <Footer />
     </>
   );
 }

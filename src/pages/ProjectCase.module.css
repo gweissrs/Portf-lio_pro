@@ -12,16 +12,26 @@
 }
 
 .backLink {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
+  font-weight: 500;
   color: #475569;
   text-decoration: none;
   margin-bottom: 3rem;
+  padding: 0.6rem 0;
+  min-height: 44px;
+  letter-spacing: 0.02em;
   transition: color 0.2s ease;
+  border-bottom: 1px solid transparent;
 }
 
-.backLink:hover { color: #06B6D4; }
+.backLink:hover {
+  color: #94A3B8;
+  border-bottom-color: rgba(148, 163, 184, 0.3);
+}
 
 /* HEADER SPLIT */
 .split {
@@ -105,6 +115,9 @@
 }
 
 .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-family: var(--font-body);
   font-size: 0.75rem;
   font-weight: 600;
@@ -117,6 +130,13 @@
   text-transform: uppercase;
 }
 
+.techIcon {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
 .links {
   display: flex;
   gap: 1.5rem;
@@ -124,19 +144,119 @@
 }
 
 .linkPrimary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-body);
   font-size: 0.9rem;
-  font-weight: 600;
-  color: #06B6D4;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   text-decoration: none;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(6, 182, 212, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: 6px;
+  padding: 0.65rem 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.linkPrimary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(6, 182, 212, 0.15) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 6px;
+}
+
+.linkPrimary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.linkPrimary:hover {
+  background: rgba(6, 182, 212, 0.18);
+  border-color: rgba(6, 182, 212, 0.6);
+  box-shadow:
+    0 0 20px rgba(6, 182, 212, 0.2),
+    0 0 40px rgba(6, 182, 212, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.linkPrimary:hover::before { opacity: 1; }
+.linkPrimary:hover::after  { left: 160%; }
+
+.linkPrimary:active {
+  transform: translateY(0px);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
 }
 
 .linkSecondary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-body);
   font-size: 0.9rem;
-  color: #475569;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   text-decoration: none;
+  color: rgba(148, 163, 184, 0.9);
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 6px;
+  padding: 0.65rem 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
+
+.linkSecondary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.linkSecondary:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(148, 163, 184, 0.5);
+  background: rgba(148, 163, 184, 0.06);
+  transform: translateY(-1px);
+}
+
+.linkSecondary:hover::after { left: 160%; }
+
+.linkSecondary:active { transform: translateY(0px); }
 
 /* CARROSSEL */
 .carousel {
@@ -156,6 +276,7 @@
 .carouselTrack {
   width: 100%;
   aspect-ratio: 16/10;
+  max-height: 420px;
   border-radius: 12px;
   overflow: hidden;
   background: rgba(6,182,212,0.04);
@@ -166,8 +287,11 @@
 .carouselImg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center center;
   display: block;
+  max-height: 420px;
+  background: rgba(255,255,255,0.02);
 }
 
 .carouselPlaceholder {
@@ -280,10 +404,23 @@
 }
 
 .navBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: #06B6D4;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #475569;
   text-decoration: none;
+  padding: 0.6rem 0;
+  min-height: 44px;
+  transition: color 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.navBack:hover {
+  color: #06B6D4;
+  border-bottom-color: rgba(6, 182, 212, 0.3);
 }
 
 .notFound {

@@ -6,18 +6,22 @@ export function ScrollToTop() {
   const { pathname, hash } = useLocation()
 
   useEffect(() => {
-    const lenis = getLenis()
-
     if (hash) {
-      setTimeout(() => {
+      let attempts = 0
+      const tryScroll = () => {
         const el = document.querySelector(hash)
         if (el) {
+          const lenis = getLenis()
           lenis
-            ? lenis.scrollTo(el, { offset: -100, immediate: false, duration: 1.2 })
+            ? lenis.scrollTo(el, { offset: -100, immediate: false, duration: 1.0 })
             : el.scrollIntoView({ behavior: 'smooth' })
+        } else if (attempts++ < 30) {
+          setTimeout(tryScroll, 50)
         }
-      }, 350)
+      }
+      setTimeout(tryScroll, 100)
     } else {
+      const lenis = getLenis()
       lenis
         ? lenis.scrollTo(0, { immediate: true })
         : window.scrollTo(0, 0)

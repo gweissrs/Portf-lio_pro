@@ -101,7 +101,10 @@ export function Projects() {
               <div className={styles.rowMeta} data-project-content>
                 <span
                   className={styles.status}
-                  style={{ color: project.statusColor }}
+                  style={{
+                    color: project.statusColor,
+                    background: `${project.statusColor}14`,
+                  }}
                 >
                   <span
                     className={styles.statusDot}
@@ -109,11 +112,6 @@ export function Projects() {
                   />
                   {project.status}
                 </span>
-                <div className={styles.stack}>
-                  {project.stack.slice(0, 2).map(tech => (
-                    <span key={tech} className={styles.tag}>{tech}</span>
-                  ))}
-                </div>
                 <span className={styles.arrow}>→</span>
               </div>
             </a>

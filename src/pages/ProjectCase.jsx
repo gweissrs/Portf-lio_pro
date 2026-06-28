@@ -2,7 +2,42 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { projects } from '../data/projects'
+import { getLenis } from '../lib/lenisInstance'
 import styles from './ProjectCase.module.css'
+import {
+  SiReact, SiJavascript, SiHtml5, SiCss, SiVite,
+  SiNodedotjs, SiExpress, SiPostgresql, SiGit,
+  SiRailway, SiNetlify, SiVercel, SiMysql,
+  SiPrisma, SiSqlite, SiFastify, SiSupabase,
+  SiTypescript, SiGoogleanalytics,
+} from 'react-icons/si'
+
+const TECH_ICONS = {
+  'HTML':             SiHtml5,
+  'CSS':              SiCss,
+  'JavaScript':       SiJavascript,
+  'Node.js':          SiNodedotjs,
+  'PostgreSQL':       SiPostgresql,
+  'PgAdmin':          SiPostgresql,
+  'React':            SiReact,
+  'Vite':             SiVite,
+  'Express':          SiExpress,
+  'Git':              SiGit,
+  'Railway':          SiRailway,
+  'Netlify':          SiNetlify,
+  'Vercel':           SiVercel,
+  'MySQL':            SiMysql,
+  'TypeScript':       SiTypescript,
+  'Supabase':         SiSupabase,
+  'Prisma':           SiPrisma,
+  'SQLite':           SiSqlite,
+  'Fastify':          SiFastify,
+  'Google Analytics': SiGoogleanalytics,
+  'JWT':              null,
+  'Canvas API':       null,
+  'Edge Functions':   null,
+  'Resend':           null,
+}
 
 export function ProjectCase() {
   const { id } = useParams()
@@ -15,16 +50,7 @@ export function ProjectCase() {
     window.dispatchEvent(new CustomEvent('cursor:preview', {
       detail: { active: false, image: null }
     }))
-    navigate('/', { state: { fromProject: true } })
-    const tryScroll = (attempts = 0) => {
-      const el = document.getElementById('projetos')
-      if (el) {
-        el.scrollIntoView({ behavior: 'instant', block: 'start' })
-      } else if (attempts < 20) {
-        setTimeout(() => tryScroll(attempts + 1), 50)
-      }
-    }
-    setTimeout(() => tryScroll(), 50)
+    navigate('/#projetos', { state: { fromProject: true } })
   }, [navigate])
 
   useEffect(() => {
@@ -89,9 +115,15 @@ export function ProjectCase() {
             </div>
 
             <div className={styles.stack}>
-              {project.stack.map(tech => (
-                <span key={tech} className={styles.tag}>{tech}</span>
-              ))}
+              {project.stack.map(tech => {
+                const Icon = TECH_ICONS[tech]
+                return (
+                  <span key={tech} className={styles.tag}>
+                    {Icon && <Icon className={styles.techIcon} aria-hidden="true" />}
+                    {tech}
+                  </span>
+                )
+              })}
             </div>
 
             <div className={styles.links}>
@@ -122,21 +154,36 @@ export function ProjectCase() {
           <div className={styles.carousel}>
             <div className={styles.carouselWrapper}>
 
-              <button
-                onClick={prevSlide}
-                className={styles.carouselBtn}
-                aria-label="Slide anterior"
-              >
-                ←
-              </button>
+              {slides.length > 1 && (
+                <button
+                  onClick={prevSlide}
+                  className={styles.carouselBtn}
+                  aria-label="Slide anterior"
+                >
+                  ←
+                </button>
+              )}
 
               <div className={styles.carouselTrack}>
                 {slides[activeSlide] ? (
-                  <img
-                    src={slides[activeSlide]}
-                    alt={`${project.name} screenshot ${activeSlide + 1}`}
-                    className={styles.carouselImg}
-                  />
+                  slides[activeSlide].endsWith('.mp4') ? (
+                    <video
+                      key={slides[activeSlide]}
+                      src={slides[activeSlide]}
+                      className={styles.carouselImg}
+                      controls
+                      autoPlay={false}
+                      muted
+                      playsInline
+                      loop
+                    />
+                  ) : (
+                    <img
+                      src={slides[activeSlide]}
+                      alt={`${project.name} screenshot ${activeSlide + 1}`}
+                      className={styles.carouselImg}
+                    />
+                  )
                 ) : (
                   <div className={styles.carouselPlaceholder}>
                     <span className={styles.placeholderLabel}>
@@ -146,26 +193,30 @@ export function ProjectCase() {
                 )}
               </div>
 
-              <button
-                onClick={nextSlide}
-                className={styles.carouselBtn}
-                aria-label="Próximo slide"
-              >
-                →
-              </button>
-
-            </div>
-
-            <div className={styles.carouselDots}>
-              {slides.map((_, i) => (
+              {slides.length > 1 && (
                 <button
-                  key={i}
-                  onClick={() => setActiveSlide(i)}
-                  className={`${styles.dot} ${i === activeSlide ? styles.dotActive : ''}`}
-                  aria-label={`Ir para slide ${i + 1}`}
-                />
-              ))}
+                  onClick={nextSlide}
+                  className={styles.carouselBtn}
+                  aria-label="Próximo slide"
+                >
+                  →
+                </button>
+              )}
+
             </div>
+
+            {slides.length > 1 && (
+              <div className={styles.carouselDots}>
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveSlide(i)}
+                    className={`${styles.dot} ${i === activeSlide ? styles.dotActive : ''}`}
+                    aria-label={`Ir para slide ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
@@ -190,9 +241,9 @@ export function ProjectCase() {
         </div>
 
         <div className={styles.nav}>
-          <Link to="/#projetos" className={styles.navBack}>
+          <a href="/" onClick={handleBack} className={styles.navBack}>
             ← Voltar para todos os projetos
-          </Link>
+          </a>
         </div>
 
       </div>
