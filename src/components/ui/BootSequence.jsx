@@ -45,6 +45,22 @@ export function BootSequence({ onComplete }) {
     window.addEventListener('mousemove', handleMouseMove);
 
     let particleAnimId = null;
+    let skipped = false;
+
+    const skipIntro = () => {
+      if (skipped) return;
+      skipped = true;
+      tl.kill();
+      if (particleAnimId) cancelAnimationFrame(particleAnimId);
+      gsap.to(overlay, {
+        opacity: 0,
+        duration: 0.25,
+        ease: 'power2.out',
+        onComplete: () => onComplete(),
+      });
+    };
+
+    overlay.addEventListener('mousedown', skipIntro);
 
     const triggerExplosion = () => {
       const W = pCanvas.width;
@@ -316,12 +332,14 @@ export function BootSequence({ onComplete }) {
       tl.kill();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      overlay.removeEventListener('mousedown', skipIntro);
       if (particleAnimId) cancelAnimationFrame(particleAnimId);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div ref={overlayRef} className={styles.overlay}>
+      <span className={styles.skipHint}>clique para pular</span>
       <canvas
         ref={particleCanvasRef}
         className={styles.particleCanvas}

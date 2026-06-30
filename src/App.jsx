@@ -57,7 +57,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      <CustomCursor />
+      {/* <CustomCursor /> */}
       <GlobalBackground />
       <Navbar isBooting={!bootDone} />
       <AnimatePresence mode="wait">

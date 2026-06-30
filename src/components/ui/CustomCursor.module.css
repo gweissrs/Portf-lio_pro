@@ -1,6 +1,4 @@
-:global(*) {
-  cursor: none !important;
-}
+/* cursor: none removido — usando cursor nativo */
 
 .cursor {
   position: fixed;
