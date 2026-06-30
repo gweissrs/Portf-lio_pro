@@ -85,7 +85,7 @@ export function Contact({ mousePos }) {
             <span className={styles.closingAccent}>começa com uma mensagem.</span>
           </h2>
           <p className={styles.closingSubtitle} data-reveal="up" data-delay="0.16">
-            Disponível para estágio e projetos freelance.
+            Disponível para estágio. Aceito freela também.
           </p>
         </div>
 

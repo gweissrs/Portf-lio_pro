@@ -144,25 +144,26 @@ export function About() {
           {/* COLUNA 2 — Narrativa */}
           <div className={styles.narrative}>
             <p className={styles.lead}>
-              Comecei a programar em 2026. Hoje já tenho produtos reais no&#8239;ar.
+              Comecei a programar em 2026. Em menos de um ano, já tenho produtos em&#8239;produção.
             </p>
             <p className={styles.paragraph}>
-              Em poucos meses saí do zero para o PayReminder
-              — um sistema de cobrança automatizada que hoje
-              gera receita recorrente para uma empresa real.
-              Desenvolvi também a landing page do meu pai,
-              que já trouxe clientes novos.
+              Em poucos meses saí do zero para o PayReminder,
+              um sistema de cobrança que hoje uma equipe
+              administrativa usa todo dia. Fiz também o site
+              do meu pai: no primeiro mês ele fechou mais
+              negócios do que antes.
             </p>
             <p className={styles.paragraph}>
               Trabalho no Hospital Baía Sul como menor aprendiz.
-              Não é tech, mas me ensinou rotina, responsabilidade
-              e como ambientes profissionais funcionam de verdade.
+              Não é tech, mas foi lá que entendi o que
+              responsabilidade de verdade significa: aparecer
+              todo dia e fazer o que precisa ser feito.
             </p>
             <p className={styles.paragraph}>
-              Uso IA como ferramenta de estudo — para pesquisar
-              boas práticas, validar decisões técnicas e acelerar
-              meu aprendizado. O que me motiva é resolver problemas
-              reais, sempre pensando na experiência de quem vai usar.
+              Uso IA pra estudar: pesquiso como outros já
+              resolveram o mesmo problema e testo decisões
+              antes de implementar. O que me motiva é construir
+              coisas que funcionam pra quem vai usar.
             </p>
           </div>
 

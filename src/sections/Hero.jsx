@@ -249,11 +249,11 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
           </p>
 
           <p ref={locationRef} className={styles.location}>
-            Florianópolis · Projetos em produção · Open to work
+            Florianópolis · Curso Técnico SESI SENAI · Open to work
           </p>
 
           <p ref={phraseRef} className={styles.phrase}>
-            Construo produtos reais. Pronto para o primeiro estágio.
+            Já tenho projetos em produção. Buscando o primeiro estágio.
           </p>
 
           <div ref={ctasRef} className={styles.ctas}>

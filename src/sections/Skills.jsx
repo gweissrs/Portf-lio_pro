@@ -40,7 +40,7 @@ const CATEGORIES = [
     id: 'backend',
     label: 'Backend & Dados',
     tech: ['Node.js', 'Express', 'PostgreSQL', 'PgAdmin', 'Prisma', 'Git'],
-    context: 'Stack completo aplicado em produção no SmartNotes, da modelagem do banco à API.',
+    context: 'Construí o SmartNotes do zero: banco de dados, API e autenticação, tudo eu mesmo.',
     badge: null,
   },
   {
@@ -54,7 +54,7 @@ const CATEGORIES = [
     id: 'process',
     label: 'Processo & Produto',
     tech: ['Modelagem de sistema (UML/ER)', 'Levantamento de requisitos', 'Boas práticas de UX', 'Scrum', 'MySQL'],
-    context: 'Base formal do curso técnico em TI (SESI SENAI), aplicada em projetos acadêmicos.',
+    context: 'Base do curso técnico SESI SENAI. Lá a entrega é real, o prazo é real, e não passar é não passar.',
     badge: 'Formação',
   },
 ]
