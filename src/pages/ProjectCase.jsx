@@ -9,7 +9,7 @@ import {
   SiNodedotjs, SiExpress, SiPostgresql, SiGit,
   SiRailway, SiNetlify, SiVercel, SiMysql,
   SiPrisma, SiSqlite, SiFastify, SiSupabase,
-  SiTypescript, SiGoogleanalytics,
+  SiTypescript, SiGoogleanalytics, SiGithub,
 } from 'react-icons/si'
 
 const TECH_ICONS = {
@@ -50,7 +50,7 @@ export function ProjectCase() {
     window.dispatchEvent(new CustomEvent('cursor:preview', {
       detail: { active: false, image: null }
     }))
-    navigate('/#projetos', { state: { fromProject: true } })
+    navigate('/', { state: { fromProject: true } })
   }, [navigate])
 
   useEffect(() => {
@@ -114,6 +114,31 @@ export function ProjectCase() {
               <span className={styles.role}>{project.role}</span>
             </div>
 
+            <div className={styles.links}>
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.linkPrimary}
+                  data-cursor-no-expand
+                >
+                  Ver projeto →
+                </a>
+              )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.linkGithub}
+                >
+                  <SiGithub aria-hidden="true" />
+                  GitHub
+                </a>
+              )}
+            </div>
+
             <div className={styles.stack}>
               {project.stack.map(tech => {
                 const Icon = TECH_ICONS[tech]
@@ -124,29 +149,6 @@ export function ProjectCase() {
                   </span>
                 )
               })}
-            </div>
-
-            <div className={styles.links}>
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.linkPrimary}
-                >
-                  Ver projeto →
-                </a>
-              )}
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.linkSecondary}
-                >
-                  GitHub
-                </a>
-              )}
             </div>
           </div>
 

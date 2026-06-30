@@ -3,9 +3,11 @@ import { useLocation } from 'react-router-dom'
 import { getLenis } from '../../lib/lenisInstance'
 
 export function ScrollToTop() {
-  const { pathname, hash } = useLocation()
+  const { pathname, hash, state } = useLocation()
 
   useEffect(() => {
+    if (state?.fromProject) return  // Home restaura a posição exata
+
     if (hash) {
       let attempts = 0
       const tryScroll = () => {
@@ -26,7 +28,7 @@ export function ScrollToTop() {
         ? lenis.scrollTo(0, { immediate: true })
         : window.scrollTo(0, 0)
     }
-  }, [pathname, hash])
+  }, [pathname, hash, state])
 
   return null
 }

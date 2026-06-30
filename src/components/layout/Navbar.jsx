@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useScrollSpy } from '../../hooks/useScrollSpy';
 import personal from '../../data/personal';
 import styles from './Navbar.module.css';
@@ -17,6 +18,8 @@ export function Navbar({ isBooting = false }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const activeId = useScrollSpy(SECTION_IDS);
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -38,7 +41,7 @@ export function Navbar({ isBooting = false }) {
     >
       <nav className={styles.nav} aria-label="Navegação principal">
         <a
-          href="#hero"
+          href={isHome ? '#hero' : '/'}
           className={styles.logo}
           data-logo
           aria-label="Ir para o início"
@@ -51,7 +54,7 @@ export function Navbar({ isBooting = false }) {
           {NAV_LINKS.map(({ id, label }) => (
             <li key={id}>
               <a
-                href={`#${id}`}
+                href={isHome ? `#${id}` : `/#${id}`}
                 className={`${styles.link} ${activeId === id ? styles.active : ''}`}
                 onClick={handleLinkClick}
                 aria-current={activeId === id ? 'page' : undefined}

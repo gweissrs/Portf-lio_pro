@@ -100,7 +100,7 @@ export function ContactLines({ mousePos, ctaHovering }) {
         const px = sx + t * dx
         const py = sy + t * dy
         // wave tapers at origin (clean start at corner)
-        const taper = t < 0.08 ? t / 0.08 : 1.0
+        const taper = t < 0.18 ? t / 0.18 : 1.0
         const wave  = Math.sin(t * Math.PI * 3.5 + time * cfg.speed + cfg.phase) * cfg.amplitude * ampMult * taper
         points.push({ x: px + nx * wave, y: py + ny * wave, t })
       }
@@ -157,8 +157,8 @@ export function ContactLines({ mousePos, ctaHovering }) {
         const sx = 0, sy = h * 0.75
         const ex = cfg.endXRatio * w, ey = cfg.endYRatio * h
         const grad = ctx.createLinearGradient(sx, sy, ex, ey)
-        grad.addColorStop(0,    cfg.colorCenter)
-        grad.addColorStop(0.02, cfg.colorCenter)
+        grad.addColorStop(0,    'transparent')
+        grad.addColorStop(0.06, cfg.colorCenter)
         grad.addColorStop(0.80, cfg.colorEdge)
         grad.addColorStop(1,    'transparent')
 

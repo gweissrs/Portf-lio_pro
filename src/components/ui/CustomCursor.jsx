@@ -5,6 +5,7 @@
 // Não colapse essas camadas em uma só — o bug volta.
 
 import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import styles from './CustomCursor.module.css'
 
 export function CustomCursor() {
@@ -13,6 +14,15 @@ export function CustomCursor() {
   const posRef = useRef({ x: -100, y: -100 })
   const curRef = useRef({ x: -100, y: -100 })
   const previewModeRef = useRef(false)
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    const cursor = cursorRef.current
+    if (!cursor) return
+    previewModeRef.current = false
+    cursor.classList.remove(styles.previewMode)
+    cursor.classList.remove(styles.expanded)
+  }, [pathname])
 
   useEffect(() => {
     const cursor = cursorRef.current
@@ -36,8 +46,9 @@ export function CustomCursor() {
       posRef.current.y = e.clientY
     }
 
-    const expand = () => {
+    const expand = (e) => {
       if (previewModeRef.current) return
+      if (e.currentTarget.hasAttribute('data-cursor-no-expand')) return
       cursor.classList.add(styles.expanded)
     }
     const collapse = () => {

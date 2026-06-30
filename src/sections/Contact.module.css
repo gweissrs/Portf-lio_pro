@@ -21,7 +21,7 @@
 /* ── Frase de encerramento ── */
 .closing {
   position: absolute;
-  top: 6rem;
+  top: 12rem;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -36,11 +36,16 @@
   font-weight: 700;
   color: #F8FAFC;
   letter-spacing: -0.04em;
-  line-height: 1.0;
+  line-height: 1.1;
   margin: 0 0 0.8rem;
 }
 
-.closingAccent { color: #06B6D4; }
+.closingAccent {
+  display: inline-block;
+  color: #06B6D4;
+  font-size: 1.18em;
+  text-shadow: 0 0 40px rgba(6, 182, 212, 0.12);
+}
 
 .closingSubtitle {
   font-family: var(--font-body);
@@ -55,7 +60,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 58%;
+  top: 76%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: row;
@@ -77,7 +82,7 @@
 }
 
 .channelText {
-  display: block;
+  display: inline-block;
   position: relative;
   font-family: var(--font-display);
   font-size: clamp(2.8rem, 5vw, 5rem);
@@ -125,16 +130,31 @@
 
 .channelAnchor:hover .channelIcon { color: #06B6D4; }
 
+@keyframes arrowPop {
+  0%   { transform: translate(0, 0) scale(1); }
+  40%  { transform: translate(5px, -5px) scale(1.2); }
+  70%  { transform: translate(2px, -2px) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
 .channelArrow {
-  display: inline-block;
-  margin-left: 0.3em;
-  font-size: 0.45em;
-  vertical-align: super;
+  position: absolute;
+  top: -0.15em;
+  right: -0.55em;
+  font-size: 0.38em;
   color: #334155;
+  line-height: 1;
   transition: color 0.2s ease;
 }
 
-.channelAnchor:hover .channelArrow { color: #06B6D4; }
+.channelAnchor:hover .channelArrow {
+  color: #06B6D4;
+  animation: arrowPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .channelAnchor:hover .channelArrow { animation: none; }
+}
 
 /* ── Linhas holográficas ── */
 .holographicWrap {

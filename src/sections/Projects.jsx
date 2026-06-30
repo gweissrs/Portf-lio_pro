@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { projects } from '../data/projects'
 import { playProjectTransition, playProjectEntrance } from '../components/ui/ProjectTransition'
+import { getLenis } from '../lib/lenisInstance'
+import { saveProjectScroll } from '../lib/scrollRestore'
 import styles from './Projects.module.css'
 
 export function Projects() {
@@ -13,7 +15,6 @@ export function Projects() {
   useLayoutEffect(() => {
     if (!location.state?.fromProject) return
     playProjectEntrance()
-    window.history.replaceState({}, '')
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -61,6 +62,8 @@ export function Projects() {
 
   const handleProjectClick = useCallback((e, project) => {
     e.preventDefault()
+    const lenis = getLenis()
+    saveProjectScroll(lenis ? lenis.scroll : window.scrollY)
     const rowEl = e.currentTarget
     playProjectTransition(rowEl, () => {
       navigate(`/projetos/${project.id}`)

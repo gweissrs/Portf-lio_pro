@@ -15,13 +15,12 @@ const ITEMS = [
     entregas: [
       'PayReminder — sistema de cobrança automatizada em produção',
       'Sistema Feirao SP — B2B para Consulfarma 2026 (Anhembi, SP)',
-      'Offline-first, 97 produtos reais, notificação por email via Edge Function',
     ],
     aprendizado: 'Quando o cliente ligou porque o sistema parou, entendi o que \'em produção\' realmente significa.',
   },
   {
-    id: '02', empresa: 'SESI SENAI', tipo: 'Formal', periodo: '2024–presente',
-    papel: 'Técnico em TI — Integrado ao Ensino Médio',
+    id: '02', empresa: 'SESI SENAI', tipo: 'Educação', periodo: '2024–presente',
+    papel: 'Curso Técnico em TI — Integrado ao Ensino Médio',
     entregas: [
       'SmartNotes — full stack em produção (Node.js + Express + PostgreSQL)',
       'Rinha SENAI 2026 — gateway que aguentou 1000 requisições concorrentes sob stress',
@@ -698,10 +697,10 @@ export function Experience() {
                           <span className={styles.nodeMetaSub}>{item.tipo} · {item.periodo}</span>
                         </div>,
                         <div  key="div"  className={styles.nodeDivider} />,
+                        <p    key="apr"  className={styles.nodeAprendizado}>"{item.aprendizado}"</p>,
                         <ul   key="list" className={styles.nodeEntregas}>
                           {item.entregas.map((e, j) => <li key={j}>{e}</li>)}
                         </ul>,
-                        <p    key="apr"  className={styles.nodeAprendizado}>"{item.aprendizado}"</p>,
                       ].map((child, idx) => (
                         <motion.div
                           key={idx}

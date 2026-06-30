@@ -81,8 +81,8 @@ export function Contact({ mousePos }) {
         {/* Frase de encerramento — topo esquerda */}
         <div className={styles.closing} data-reveal="up">
           <h2 className={styles.closingTitle} data-reveal="up" data-delay="0.08">
-            O próximo projeto começa<br />
-            <span className={styles.closingAccent}>com uma mensagem.</span>
+            O próximo projeto<br />
+            <span className={styles.closingAccent}>começa com uma mensagem.</span>
           </h2>
           <p className={styles.closingSubtitle} data-reveal="up" data-delay="0.16">
             Disponível para estágio e projetos freelance.

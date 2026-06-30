@@ -1,5 +1,9 @@
 import { gsap } from 'gsap'
 
+const OVERSHOOT = 60
+const BLADE_BG_UP   = 'linear-gradient(to bottom, rgba(10,10,10,0) 0px, rgba(10,10,10,0.6) 15px, rgba(10,10,10,0.92) 32px, #0A0A0A 48px)'
+const BLADE_BG_DOWN = 'linear-gradient(to top,   rgba(10,10,10,0) 0px, rgba(10,10,10,0.6) 15px, rgba(10,10,10,0.92) 32px, #0A0A0A 48px)'
+
 export const playProjectTransition = (rowEl, onComplete) => {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (prefersReduced) {
@@ -33,7 +37,7 @@ export const playProjectTransition = (rowEl, onComplete) => {
       right: 0;
       bottom: ${vh - lineY}px;
       height: 0px;
-      background: #0A0A0A;
+      background: ${BLADE_BG_UP};
       z-index: 9998;
       pointer-events: none;
       will-change: height;
@@ -47,7 +51,7 @@ export const playProjectTransition = (rowEl, onComplete) => {
       right: 0;
       top: ${lineY}px;
       height: 0px;
-      background: #0A0A0A;
+      background: ${BLADE_BG_DOWN};
       z-index: 9998;
       pointer-events: none;
       will-change: height;
@@ -57,13 +61,13 @@ export const playProjectTransition = (rowEl, onComplete) => {
     document.body.appendChild(bladeDown)
 
     gsap.to(bladeUp, {
-      height: lineY,
+      height: lineY + OVERSHOOT,
       duration: 0.7,
       ease: 'power2.inOut',
     })
 
     gsap.to(bladeDown, {
-      height: vh - lineY,
+      height: vh - lineY + OVERSHOOT,
       duration: 0.7,
       ease: 'power2.inOut',
       onComplete: () => {
@@ -97,12 +101,12 @@ export const playProjectEntrance = (onComplete) => {
     left: 0;
     right: 0;
     bottom: ${vh - splitY}px;
-    height: ${splitY}px;
-    background: #0A0A0A;
+    height: ${splitY + OVERSHOOT}px;
+    background: ${BLADE_BG_UP};
     opacity: 1;
     z-index: 9998;
     pointer-events: none;
-    will-change: transform, opacity;
+    will-change: height;
   `
 
   const bladeDown = document.createElement('div')
@@ -112,12 +116,12 @@ export const playProjectEntrance = (onComplete) => {
     left: 0;
     right: 0;
     top: ${splitY}px;
-    height: ${vh - splitY}px;
-    background: #0A0A0A;
+    height: ${vh - splitY + OVERSHOOT}px;
+    background: ${BLADE_BG_DOWN};
     opacity: 1;
     z-index: 9998;
     pointer-events: none;
-    will-change: transform, opacity;
+    will-change: height;
   `
 
   document.body.appendChild(bladeUp)
