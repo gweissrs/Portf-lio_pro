@@ -11,8 +11,8 @@
   border-radius: 50%;
   pointer-events: none;
   z-index: 99999;
-  overflow: hidden;
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  background: white;
+  mix-blend-mode: difference;
   transition:
     width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
     height 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -32,25 +32,16 @@
   height: 72px;
   top: -36px;
   left: -36px;
+  background: transparent;
+  mix-blend-mode: normal;
 }
 
-/* Camada 1: lens com backdrop-filter — some no previewMode */
+/* Placeholder — mantido para não quebrar estrutura do JSX */
 .cursorLens {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.001);
-  backdrop-filter: invert(1) hue-rotate(180deg);
-  -webkit-backdrop-filter: invert(1) hue-rotate(180deg);
-  opacity: 1;
-  transition: opacity 0.3s ease;
+  display: none;
 }
 
-.cursor.previewMode .cursorLens {
-  opacity: 0;
-}
-
-/* Camada 2: fundo do preview — aparece no previewMode */
+/* Fundo do preview — aparece no previewMode */
 .cursorPreviewBg {
   position: absolute;
   inset: 0;
@@ -68,7 +59,7 @@
   opacity: 1;
 }
 
-/* Camada 3: texto — nunca filho do backdrop-filter */
+/* Texto do preview */
 .cursorLabel {
   position: absolute;
   inset: 0;
@@ -95,4 +86,8 @@
 @media not all and (any-pointer: fine) {
   .cursor { display: none; }
   :global(*) { cursor: auto !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { transition: none; }
 }
