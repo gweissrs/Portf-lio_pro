@@ -12,6 +12,7 @@
   pointer-events: none;
   z-index: 99999;
   overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
   transition:
     width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
     height 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -91,7 +92,7 @@
   opacity: 1;
 }
 
-@media (hover: none), (pointer: coarse) {
+@media not all and (any-pointer: fine) {
   .cursor { display: none; }
   :global(*) { cursor: auto !important; }
 }
