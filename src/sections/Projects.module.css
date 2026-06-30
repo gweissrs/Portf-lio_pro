@@ -64,8 +64,10 @@
   transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
 
-.row:hover {
-  transform: translateX(1.5rem);
+@media (hover: hover) {
+  .row:hover {
+    transform: translateX(1.5rem);
+  }
 }
 
 .row:hover .projectName,
@@ -185,6 +187,13 @@
   }
 }
 
+@media (max-width: 768px) {
+  .section {
+    padding-top: 4rem;
+    padding-bottom: 3rem;
+  }
+}
+
 @media (max-width: 900px) {
   .preview { display: none; }
 
@@ -193,8 +202,10 @@
     gap: 1rem;
   }
 
-  .row:hover {
-    transform: translateX(0.75rem);
+  @media (hover: hover) {
+    .row:hover {
+      transform: translateX(0.75rem);
+    }
   }
 
   .rowMeta {

@@ -345,8 +345,10 @@ export function Experience() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  // Entrance animations — faster, snappier
+  // Entrance animations — faster, snappier (desktop only)
   useEffect(() => {
+    const isMobileCheck = window.innerWidth <= 768
+    if (isMobileCheck) return
     const ctx = gsap.context(() => {
       sectionRef.current?.querySelectorAll('[data-reveal]').forEach(el => {
         const delay = parseFloat(el.dataset.delay || 0)
@@ -584,7 +586,7 @@ export function Experience() {
       {/* ── Desktop ── */}
       {!isMobile && (
         <div className={styles.sticky}>
-          <canvas ref={canvasRef} className={styles.canvas} style={{ zIndex: 0 }} />
+          <canvas ref={canvasRef} className={styles.canvas} style={{ zIndex: 0, touchAction: 'pan-y' }} />
           <canvas
             ref={canvasLinesRef}
             aria-hidden="true"

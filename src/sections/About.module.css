@@ -103,7 +103,7 @@
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: 5rem;
-  align-items: center;
+  align-items: end;
   margin-bottom: 6rem;
   padding-top: 4rem;
 }
@@ -112,7 +112,6 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding-top: 1.5rem;
 }
 
 .lead {
@@ -123,8 +122,6 @@
   letter-spacing: -0.01em;
   line-height: 1.4;
   margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .paragraph {
@@ -253,9 +250,16 @@
 
 /* Mobile */
 @media (max-width: 768px) {
+  .section {
+    padding-top: 4rem;
+    padding-bottom: 1rem;
+  }
+
   .body {
     grid-template-columns: 1fr;
     gap: 2.5rem;
+    padding-top: 2rem;
+    margin-bottom: 3rem;
   }
 
   .titleCol {
@@ -277,5 +281,11 @@
   .metricBlock {
     flex: 1;
     padding: 1rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .bigStatement {
+    font-size: clamp(2.4rem, 10vw, 3.2rem);
   }
 }

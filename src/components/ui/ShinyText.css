@@ -1,6 +1,6 @@
 .shiny-text {
   display: inline-block;
-  font-family: 'Outfit', sans-serif;
+  font-family: inherit;
   font-size: 0.8rem;
   letter-spacing: 0.04em;
   background: linear-gradient(

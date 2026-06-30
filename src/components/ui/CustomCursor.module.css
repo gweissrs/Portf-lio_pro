@@ -91,7 +91,7 @@
   opacity: 1;
 }
 
-@media (hover: none) {
+@media (hover: none), (pointer: coarse) {
   .cursor { display: none; }
   :global(*) { cursor: auto !important; }
 }

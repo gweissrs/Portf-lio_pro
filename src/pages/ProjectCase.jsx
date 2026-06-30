@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { projects } from '../data/projects'
 import { getLenis } from '../lib/lenisInstance'
@@ -77,6 +77,20 @@ export function ProjectCase() {
     setActiveSlide(i => (i - 1 + slides.length) % slides.length)
   const nextSlide = () =>
     setActiveSlide(i => (i + 1) % slides.length)
+
+  const touchStartX = useRef(null)
+
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+  const onTouchEnd = (e) => {
+    if (touchStartX.current === null) return
+    const delta = e.changedTouches[0].clientX - touchStartX.current
+    if (Math.abs(delta) > 50) {
+      delta > 0 ? prevSlide() : nextSlide()
+    }
+    touchStartX.current = null
+  }
 
   return (
     <motion.article
@@ -166,7 +180,7 @@ export function ProjectCase() {
                 </button>
               )}
 
-              <div className={styles.carouselTrack}>
+              <div className={styles.carouselTrack} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
                 {slides[activeSlide] ? (
                   slides[activeSlide].endsWith('.mp4') ? (
                     <video

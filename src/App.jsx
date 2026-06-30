@@ -37,6 +37,7 @@ export default function App() {
       smoothWheel: true,
       wheelMultiplier: 0.8,
       touchMultiplier: 1.5,
+      smoothTouch: false,
     });
 
     setLenis(lenis);

@@ -19,33 +19,36 @@ export function Contact({ mousePos }) {
 
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isMobile = window.innerWidth <= 768
 
     const ctx = gsap.context(() => {
 
-      // data-reveal — padrão exato do About.jsx
-      const reveals = sectionRef.current.querySelectorAll('[data-reveal]')
-      reveals.forEach((el) => {
-        const type  = el.dataset.reveal
-        const delay = parseFloat(el.dataset.delay || 0)
-        if (!prefersReduced) {
-          gsap.set(el, {
-            opacity: 0,
-            y: type === 'up' ? 50 : 0,
-            x: type === 'left' ? -40 : 0,
-          })
-          gsap.to(el, {
-            opacity: 1, y: 0, x: 0,
-            duration: 1.0,
-            ease: 'expo.out',
-            delay,
-            scrollTrigger: { trigger: el, start: 'top 88%' },
-          })
-        }
-      })
+      // No mobile o GSAP não toca nos elementos de reveal — o CSS já posiciona tudo
+      if (!isMobile) {
+        const reveals = sectionRef.current.querySelectorAll('[data-reveal]')
+        reveals.forEach((el) => {
+          const type  = el.dataset.reveal
+          const delay = parseFloat(el.dataset.delay || 0)
+          if (!prefersReduced) {
+            gsap.set(el, {
+              opacity: 0,
+              y: type === 'up' ? 50 : 0,
+              x: type === 'left' ? -40 : 0,
+            })
+            gsap.to(el, {
+              opacity: 1, y: 0, x: 0,
+              duration: 1.0,
+              ease: 'expo.out',
+              delay,
+              scrollTrigger: { trigger: el, start: 'top 88%' },
+            })
+          }
+        })
+      }
 
-      // Links de contato entram com stagger
+      // Links de contato entram com stagger (desktop apenas)
       const anchors = anchorRefs.current.filter(Boolean)
-      if (anchors.length && !prefersReduced) {
+      if (anchors.length && !prefersReduced && !isMobile) {
         gsap.set(anchors, { opacity: 0, y: 30, filter: 'blur(14px)' })
         gsap.to(anchors, {
           opacity: 1, y: 0, filter: 'blur(0px)',

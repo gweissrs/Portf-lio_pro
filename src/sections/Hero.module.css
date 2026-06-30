@@ -1,8 +1,11 @@
 .hero {
   position: relative;
   height: 100vh;
+  height: 100svh;
   min-height: 100vh;
+  min-height: 100svh;
   max-height: 100vh;
+  max-height: 100svh;
   overflow: hidden;
   background: transparent;
   border: none;
@@ -65,10 +68,16 @@
   font-weight: 600;
   line-height: 1.0;
   letter-spacing: -0.03em;
-  white-space: nowrap;
+  white-space: normal;
   color: #F8FAFC;
   margin-bottom: 1.2rem;
   text-align: center;
+}
+
+@media (min-width: 769px) {
+  .name {
+    white-space: nowrap;
+  }
 }
 
 /* Título da profissão — label ciano */
@@ -137,12 +146,11 @@
 @media (max-width: 768px) {
   .hero {
     padding-top: calc(var(--navbar-height) + var(--spacing-lg));
-    padding-bottom: calc(var(--spacing-3xl) + 4rem);
+    padding-bottom: 5rem;
   }
 
   .name {
     font-size: clamp(2.5rem, 10vw, 3.5rem);
-    white-space: normal;
   }
 
   .phrase {

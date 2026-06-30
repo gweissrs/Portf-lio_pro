@@ -1,5 +1,14 @@
 import { useRef, useEffect } from 'react';
 
+// Evita o artefato de fímbria escura do canvas: 'transparent' = rgba(0,0,0,0),
+// que ao interpolar com uma cor cria tons escuros. Aqui usamos a mesma cor com alpha 0.
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r},${g},${b},${alpha})`
+}
+
 function buildSmoothPath(ctx, points, count) {
   if (count < 2) return;
   ctx.moveTo(points[0].x, points[0].y);
@@ -42,11 +51,21 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
       if (cachedW <= 0) return;
       grads = LINE_GRAD_DEFS.map(({ colorCenter, colorEdge }) => {
         const g = ctx.createLinearGradient(0, 0, cachedW, 0);
-        g.addColorStop(0,    'transparent');
-        g.addColorStop(0.06, colorEdge);
-        g.addColorStop(0.5,  colorCenter);
-        g.addColorStop(0.94, colorEdge);
-        g.addColorStop(1,    'transparent');
+        // Curva ease-in/out com stops intermediários — sem fímbria escura
+        // (usa a mesma cor da borda com alpha 0 em vez de 'transparent')
+        g.addColorStop(0,    hexToRgba(colorEdge, 0));
+        g.addColorStop(0.03, hexToRgba(colorEdge, 0.08));
+        g.addColorStop(0.06, hexToRgba(colorEdge, 0.28));
+        g.addColorStop(0.10, hexToRgba(colorEdge, 0.62));
+        g.addColorStop(0.14, hexToRgba(colorEdge, 0.88));
+        g.addColorStop(0.18, colorEdge);
+        g.addColorStop(0.50, colorCenter);
+        g.addColorStop(0.82, colorEdge);
+        g.addColorStop(0.86, hexToRgba(colorEdge, 0.88));
+        g.addColorStop(0.90, hexToRgba(colorEdge, 0.62));
+        g.addColorStop(0.94, hexToRgba(colorEdge, 0.28));
+        g.addColorStop(0.97, hexToRgba(colorEdge, 0.08));
+        g.addColorStop(1,    hexToRgba(colorEdge, 0));
         return g;
       });
     };
@@ -145,7 +164,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
 
       const energyAlphaBoost = energyBoost * 0.4;
 
-      // Glow: 2 camadas (era 4) — 50% menos passes de ctx.filter por frame
+      // Glow: 2 camadas — usa o gradiente para que o brilho também desapareça nas pontas
       for (let gi = 0; gi < GLOW_LAYERS.length; gi++) {
         const layer = GLOW_LAYERS[gi];
         const effectiveAlpha = gi === GLOW_LAYERS.length - 1
@@ -154,7 +173,7 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
         ctx.save();
         ctx.globalAlpha = opacity * effectiveAlpha;
         ctx.lineWidth   = lineWidth * layer.widthMult;
-        ctx.strokeStyle = glowColor;
+        ctx.strokeStyle = grad;
         ctx.filter      = `blur(${layer.blurPx}px)`;
         ctx.beginPath();
         buildSmoothPath(ctx, pointPool, pointCount);
@@ -183,9 +202,8 @@ export function HolographicLine({ mousePos, revealProgress, ctaHovering }) {
           sumW += lineWidth * Math.max(0.3, cf);
           cnt++;
         }
-        const lastT = pointPool[endIdx].t;
         ctx.lineWidth   = sumW / cnt;
-        ctx.globalAlpha = Math.min(1, (lastT / 0.06) * opacity);
+        ctx.globalAlpha = opacity;
 
         ctx.beginPath();
         ctx.moveTo(pointPool[startIdx - 1].x, pointPool[startIdx - 1].y);

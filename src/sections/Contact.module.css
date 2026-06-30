@@ -163,6 +163,7 @@
   left: 0;
   width: 100%;
   height: 40vh;
+  height: 40svh;
   pointer-events: none;
   opacity: 0.45;
   overflow: visible;
@@ -184,13 +185,19 @@
   .closing {
     position: static;
     max-width: 100%;
+    transform: none;
+    text-align: left;
+  }
+
+  .channelHitbox {
+    display: none;
   }
 
   .channelRow {
     position: static;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
+    gap: 0.5rem;
     transform: none;
   }
 
@@ -206,12 +213,16 @@
   }
 
   .channelIcon {
-    position: static;
-    display: inline-block;
-    margin-right: 0.75rem;
-    top: auto;
-    left: auto;
-    vertical-align: middle;
+    display: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .closingTitle {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+  }
+  .closingAccent {
+    font-size: 1em;
   }
 }
 

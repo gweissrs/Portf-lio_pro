@@ -25,6 +25,9 @@ export function CustomCursor() {
   }, [pathname])
 
   useEffect(() => {
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches
+    if (isTouch) return
+
     const cursor = cursorRef.current
     if (!cursor) return
 

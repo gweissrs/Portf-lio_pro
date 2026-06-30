@@ -272,7 +272,7 @@
 
 /* ── Mobile ── */
 .mobileWrapper {
-  padding: 5rem var(--spacing-lg) 8rem;
+  padding: 5rem var(--spacing-lg) 3rem;
 }
 
 .mobileHeader {

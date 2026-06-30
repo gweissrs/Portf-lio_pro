@@ -11,6 +11,7 @@ export function About() {
 
   useEffect(() => {
     const splits = []
+    let mounted = true
 
     const ctx = gsap.context(() => {
 
@@ -52,70 +53,76 @@ export function About() {
       })
 
       // SplitText type:'lines' — cada linha entra como bloco único
-      const leadEl       = sectionRef.current.querySelector(`.${styles.lead}`)
-      const paragraphEls = [...sectionRef.current.querySelectorAll(`.${styles.paragraph}`)]
-      const textEls      = [leadEl, ...paragraphEls]
+      // Wrapped in fonts.ready so SplitText measures correctly after web fonts load
+      document.fonts.ready.then(() => {
+        if (!mounted) return
 
-      const splitInstances = textEls.map((el) => {
-        const split = new SplitText(el, { type: 'lines' })
-        splits.push(split)
+        const leadEl       = sectionRef.current?.querySelector(`.${styles.lead}`)
+        const paragraphEls = [...(sectionRef.current?.querySelectorAll(`.${styles.paragraph}`) || [])]
+        const textEls      = [leadEl, ...paragraphEls].filter(Boolean)
 
-        // Masking manual: overflow:hidden por linha para impedir "vazamento" visual
-        // durante a transição. split.revert() restaura innerHTML original, removendo esses wrappers.
-        split.lines.forEach(line => {
-          const mask = document.createElement('div')
-          mask.style.cssText = 'overflow: hidden; display: block;'
-          line.parentNode.insertBefore(mask, line)
-          mask.appendChild(line)
+        const splitInstances = textEls.map((el) => {
+          const split = new SplitText(el, { type: 'lines' })
+          splits.push(split)
+
+          // Masking manual: overflow:hidden por linha para impedir "vazamento" visual
+          // durante a transição. split.revert() restaura innerHTML original, removendo esses wrappers.
+          split.lines.forEach(line => {
+            const mask = document.createElement('div')
+            mask.style.cssText = 'overflow: hidden; display: block;'
+            line.parentNode.insertBefore(mask, line)
+            mask.appendChild(line)
+          })
+
+          gsap.set(split.lines, { yPercent: 110, opacity: 0 })
+
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 85%',
+              end:   'top 68%',
+              scrub: true,
+            },
+          }).to(split.lines, {
+            yPercent: 0,
+            opacity:  1,
+            stagger:  0.15,
+            duration: 0.5,
+            ease:     'none',
+          })
+
+          return split
         })
 
-        gsap.set(split.lines, { yPercent: 110, opacity: 0 })
-
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 85%',
-            end:   'top 68%',
-            scrub: true,
-          },
-        }).to(split.lines, {
-          yPercent: 0,
-          opacity:  1,
-          stagger:  0.15, // sequencial linha a linha, sem sobreposição
-          duration: 0.5,
-          ease:     'none',
-        })
-
-        return split
+        // Saída — narrativa sobe, bigStatement recua para a esquerda
+        const orderedLines = splitInstances.flatMap(s => [...s.lines])
+        const exitConfig = {
+          trigger:       sectionRef.current,
+          start:         'bottom 30%',
+          end:           'bottom 18%',
+          toggleActions: 'play none none reverse',
+        }
+        gsap.timeline({ scrollTrigger: exitConfig })
+          .to(orderedLines, {
+            yPercent: -110,
+            opacity:  0,
+            duration: 0.35,
+            ease:     'power3.in',
+            stagger:  0.04,
+          })
+          .to(bigLines, {
+            x:        -60,
+            opacity:  0,
+            duration: 0.35,
+            ease:     'power3.in',
+            stagger:  0.04,
+          }, 0)
       })
-
-      // Saída — narrativa sobe, bigStatement recua para a esquerda
-      const orderedLines = splitInstances.flatMap(s => [...s.lines])
-      const exitConfig = {
-        trigger:       sectionRef.current,
-        start:         'bottom 30%',
-        end:           'bottom 18%',
-        toggleActions: 'play none none reverse',
-      }
-      gsap.timeline({ scrollTrigger: exitConfig })
-        .to(orderedLines, {
-          yPercent: -110,
-          opacity:  0,
-          duration: 0.35,
-          ease:     'power3.in',
-          stagger:  0.04,
-        })
-        .to(bigLines, {
-          x:        -60,
-          opacity:  0,
-          duration: 0.35,
-          ease:     'power3.in',
-          stagger:  0.04,
-        }, 0)
 
     }, sectionRef)
 
     return () => {
+      mounted = false
       ctx.revert()
       // split.revert() restaura innerHTML original, removendo spans de linha
       // E os mask divs adicionados manualmente (foram adicionados após o snapshot do SplitText)
@@ -147,17 +154,16 @@ export function About() {
               Comecei a programar em 2026. Em menos de um ano, já tenho produtos em&#8239;produção.
             </p>
             <p className={styles.paragraph}>
-              Em poucos meses saí do zero para o PayReminder,
-              um sistema de cobrança que hoje uma equipe
-              administrativa usa todo dia. Fiz também o site
-              do meu pai: no primeiro mês ele fechou mais
-              negócios do que antes.
+              O primeiro projeto real foi o PayReminder, sistema
+              de cobrança que hoje uma equipe administrativa usa
+              todo dia. Fiz também o site do meu pai: no primeiro
+              mês ele fechou mais negócios do que antes.
             </p>
             <p className={styles.paragraph}>
               Trabalho no Hospital Baía Sul como menor aprendiz.
-              Não é tech, mas foi lá que entendi o que
-              responsabilidade de verdade significa: aparecer
-              todo dia e fazer o que precisa ser feito.
+              Não é tech, mas foi lá que entendi o que é
+              responsabilidade em ambiente profissional e fazer
+              todo dia o que precisa ser feito.
             </p>
             <p className={styles.paragraph}>
               Uso IA pra estudar: pesquiso como outros já

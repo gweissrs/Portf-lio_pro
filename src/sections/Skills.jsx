@@ -40,7 +40,7 @@ const CATEGORIES = [
     id: 'backend',
     label: 'Backend & Dados',
     tech: ['Node.js', 'Express', 'PostgreSQL', 'PgAdmin', 'Prisma', 'Git'],
-    context: 'Construí o SmartNotes do zero: banco de dados, API e autenticação, tudo eu mesmo.',
+    context: 'Construí o SmartNotes do zero: banco de dados, API e autenticação.',
     badge: null,
   },
   {
