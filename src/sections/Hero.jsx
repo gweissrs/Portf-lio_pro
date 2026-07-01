@@ -257,7 +257,7 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
           </p>
 
           <div ref={ctasRef} className={styles.ctas}>
-            <Button variant="primary" href="#projetos" aria-label="Ver meus projetos">
+            <Button variant="primary" href="#projetos" aria-label="Ver meus projetos" style={{ background: '#0A1F22' }}>
               Ver projetos
             </Button>
             <Button
