@@ -5,9 +5,9 @@
   right: 0;
   z-index: 100;
   height: var(--navbar-height);
-  background-color: rgba(10, 10, 10, 0.35);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(10, 10, 10, 0.55);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   transition: background-color var(--transition-base), backdrop-filter var(--transition-base);
 }
 
