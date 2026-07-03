@@ -6,7 +6,7 @@ export const projects = [
     tagline: 'Sistema de cobrança automatizada em produção',
     description: 'A Coana enfrentava inadimplência sem processo estruturado. Construí o PayReminder — sistema que importa planilhas Excel e dispara e-mails automáticos por evento de cobrança. Em produção, gerando receita recorrente.',
     stack: ['HTML', 'CSS', 'JavaScript', 'Node.js', 'PostgreSQL'],
-    liveUrl: 'https://teleioscode.com',
+    liveUrl: null,
     githubUrl: 'https://github.com/HenriqueSasakiofc/PayReminder',
     role: 'Desenvolvedor único',
     status: 'Em produção',
@@ -16,7 +16,7 @@ export const projects = [
     process: 'O sistema é alimentado com planilhas Excel — uma com dados dos clientes, outra com pedidos em aberto. A partir daí, identifica quem está inadimplente ou com vencimento próximo e dispara os lembretes automaticamente. Dá pra mandar mensagem manual também, quando o caso pede. Fiz a interface e conduzi reuniões com o cliente pra ajustar fluxos e melhorar a usabilidade conforme o uso real ia mostrando o que não funcionava. Por ter esse contato mais frequente com o cliente, também fiquei com a parte de negociação do projeto. Participei das decisões de arquitetura. O backend e o deploy ficaram com dois colegas do SESI SENAI.',
     result: 'Sistema em uso diário pela equipe da Coana. Eliminou o processo manual de cobranças individuais e liberou tempo pra outras tarefas. O cliente ainda pede ajustes com frequência.',
     challenges: 'Projetar algo intuitivo pra ser operado todo dia por pessoas sem perfil técnico, sem manual. E coordenar o desenvolvimento com mais dois devs, garantindo que frontend e backend conversassem e que a entrega chegasse no prazo combinado com o cliente.',
-    gallery: ['/material_projetos/pay_reminder/2026-06-27 19-54-52.mp4'],
+    gallery: ['/material_projetos/pay_reminder/pay_reminder_h264.mp4'],
   },
   {
     id: 'william-weiss',
@@ -36,8 +36,8 @@ export const projects = [
     result: 'No primeiro mês ele fechou mais negócios do que antes. O Instagram cresceu tão rápido que a plataforma derrubou a conta por suspeita de bot — fomos de dezenas pra casa do milhar em poucas semanas. Foi a primeira vez que vi algo que eu fiz crescer rápido demais pra plataforma aguentar.',
     challenges: 'Fazer tudo ao mesmo tempo: criar o site, aprender Google Analytics na prática e cuidar do conteúdo, sem referência de como fazer nada disso.',
     gallery: [
-      '/material_projetos/william_weiss/Captura de tela 2026-06-27 201327.png',
-      '/material_projetos/william_weiss/Captura de tela 2026-06-27 201350.png',
+      '/material_projetos/william_weiss/Captura_de_tela_2026-06-27_201327.png',
+      '/material_projetos/william_weiss/Captura_de_tela_2026-06-27_201350.png',
     ],
   },
   {
@@ -58,8 +58,8 @@ export const projects = [
     result: 'Plataforma no ar, qualquer pessoa pode criar uma conta. Uso todo dia pra documentar bancos de dados e parâmetros técnicos dos meus projetos. Resolve exatamente o que me motivou a construir.',
     challenges: 'Segurança foi o que mais me travou. Sem experiência prévia, fui aprendendo durante o desenvolvimento. O mural interativo de tabelas também exigiu um nível de manipulação de estado que eu não tinha enfrentado antes.',
     gallery: [
-      '/material_projetos/smart_notes/Captura de tela 2026-06-27 202128.png',
-      '/material_projetos/smart_notes/Captura de tela 2026-06-27 202621.png',
+      '/material_projetos/smart_notes/Captura_de_tela_2026-06-27_202128.png',
+      '/material_projetos/smart_notes/Captura_de_tela_2026-06-27_202621.png',
     ],
   },
   {
@@ -79,7 +79,7 @@ export const projects = [
     process: 'Ainda em fase de concepção. Antes de escrever código, pesquisei o que faltava nos concorrentes. O diferencial que mapeei: controle de fluxo de caixa diário mais planejamento de longo prazo com recomendação de investimento por objetivo de vida. A identidade visual já está pronta.',
     result: 'Conceito e identidade visual definidos. Está pausado por prioridade em projetos com clientes, mas o escopo está claro. É o projeto mais ambicioso que tenho.',
     challenges: 'O maior desafio ainda está por vir: construir um algoritmo que, dado um objetivo de vida, recomende a categoria de investimento certa. Não é só técnico — é um problema de produto e de conhecimento financeiro ao mesmo tempo.',
-    gallery: ['/material_projetos/smart_plan/Captura de tela 2026-05-11 204837.png'],
+    gallery: ['/material_projetos/smart_plan/Captura_de_tela_2026-05-11_204837.png'],
   },
   {
     id: 'portfolio-academico',
@@ -98,7 +98,7 @@ export const projects = [
     process: 'Construído com HTML, CSS, JavaScript e Canvas API. Documentei o hackathon e os projetos de modelagem do trimestre. As partículas interativas com Canvas foram por conta própria — não era requisito, mas queria explorar a API e entregar algo diferente do que se esperava.',
     result: 'Portfólio no ar, documentando a trajetória do curso. Foi o primeiro experimento com Canvas API e animações interativas — aprendizado que apareceu em projetos posteriores.',
     challenges: 'Aprender Canvas API do zero durante a construção, no prazo de entrega do trimestre.',
-    gallery: ['/material_projetos/portfólio_academico/2026-06-27 20-04-30.mp4'],
+    gallery: ['/material_projetos/portfólio_academico/portfolio_h264.mp4'],
   },
   {
     id: 'sistema-feirao-sp',
@@ -117,7 +117,7 @@ export const projects = [
     process: 'Optei por arquitetura offline-first com sync automático pra garantir funcionamento mesmo com a rede instável do pavilhão. Catálogo local com 97 produtos. QR codes pra autoatendimento. Quando o pedido era enviado, o time administrativo recebia notificação automática por email.',
     result: 'Usado em campo durante 3 dias de feira com atendentes reais e centenas de clientes. Eliminou as planilhas manuais e gerou dados de desempenho do time pra cálculo de comissões.',
     challenges: 'Garantir que funcionasse sem internet num pavilhão de feira. Sincronizar pedidos sem duplicatas. Entregar antes da feira começar.',
-    gallery: ['/material_projetos/sistema_feirao_SP/2026-06-27 19-59-35.mp4'],
+    gallery: ['/material_projetos/sistema_feirao_SP/feirao_h264.mp4'],
   },
   {
     id: 'desafio-bp-bancos',
@@ -136,6 +136,6 @@ export const projects = [
     process: 'Fui o único desenvolvedor frontend do time poussin-devs. Cuidei de toda a interface do gateway — fluxo de pagamento, estados de transação e integração com a API. O juiz era um script automatizado: sem subjetividade, sem desconto.',
     result: '1º lugar. Prêmio em dinheiro e visita à BP Bancos pra conhecer o ambiente de produção.',
     challenges: 'Se a integração com o backend falhava em qualquer regra de negócio, perdia ponto. Sem margem pra erro, com outros times competindo ao mesmo tempo.',
-    gallery: ['/material_projetos/desafio_BP_bancos/2026-06-27 22-55-52.mp4'],
+    gallery: ['/material_projetos/desafio_BP_bancos/desafio_bp_h264.mp4'],
   },
 ]
