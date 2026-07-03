@@ -181,7 +181,7 @@
   box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
 }
 
-/* GitHub — text link com caixa reveal no hover */
+/* GitHub — caixa ciano se desenhando em volta do texto */
 .linkGithub {
   position: relative;
   display: inline-flex;
@@ -191,22 +191,24 @@
   font-size: 0.8rem;
   font-weight: 500;
   text-decoration: none;
-  color: #475569;
+  color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.02em;
   min-height: 44px;
   padding: 0.35rem 0.65rem;
   border-radius: 4px;
-  transition: color 0.25s ease;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 .linkGithub::before {
   content: '';
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  border: 1px solid rgba(6, 182, 212, 0.5);
   border-radius: 4px;
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s ease;
+  box-shadow: none;
 }
 
 .linkGithub svg {
@@ -216,11 +218,13 @@
 }
 
 .linkGithub:hover {
-  color: #94A3B8;
+  color: #06B6D4;
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
 }
 
 .linkGithub:hover::before {
   clip-path: inset(0 0% 0 0);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.2), inset 0 0 8px rgba(6, 182, 212, 0.06);
 }
 
 @media (prefers-reduced-motion: reduce) {
