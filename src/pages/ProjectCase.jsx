@@ -134,7 +134,7 @@ export function ProjectCase() {
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={styles.linkPrimary}
+                  className={styles.linkSecondary}
                   data-cursor-no-expand
                 >
                   Ver projeto →
