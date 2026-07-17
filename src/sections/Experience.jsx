@@ -11,37 +11,37 @@ import styles from './Experience.module.css'
 const ITEMS = [
   {
     id: '01', empresa: 'Coana', tipo: 'Freelance', periodo: '2026',
-    papel: 'Desenvolvedor Frontend Freelance',
+    papel: 'Analista de Processos & Desenvolvedor',
     entregas: [
-      'PayReminder — sistema de cobrança automatizada em produção',
-      'Sistema Feirao SP — B2B para Consulfarma 2026 (Anhembi, SP)',
+      'Mapeamento e digitalização do processo de cobrança (PayReminder)',
+      'Digitalização de operação B2B em feira farmacêutica (Sistema Feirao SP)',
     ],
     aprendizado: 'Quando o cliente ligou porque o sistema parou, entendi o que \'em produção\' realmente significa.',
   },
   {
     id: '02', empresa: 'SESI SENAI', tipo: 'Educação', periodo: '2024–presente',
-    papel: 'Curso Técnico em TI — Integrado ao Ensino Médio',
+    papel: 'Curso Técnico em TI: Análise, Desenvolvimento e Processos',
     entregas: [
-      'SmartNotes — full stack em produção (Node.js + Express + PostgreSQL)',
-      'Rinha SENAI 2026 — gateway que aguentou 1000 requisições concorrentes sob stress',
+      'SmartNotes: sistema de documentação e gestão de dados pessoais',
+      '1º lugar no Desafio BP Bancos: gateway avaliado por benchmark automatizado',
     ],
     aprendizado: 'Tarefa toda semana, sistema pra entregar, prazo real. Se não funciona, não passa. O SENAI não simula pressão, ele aplica pressão.',
   },
   {
     id: '03', empresa: 'Hospital Baía Sul', tipo: 'Formal', periodo: '2025–presente',
-    papel: 'Menor Aprendiz — Suprimentos / CAF',
+    papel: 'Menor Aprendiz: Suprimentos e Controle Administrativo',
     entregas: [
-      'Operação de setor em ambiente hospitalar de alta exigência',
-      'Rotina profissional paralela ao curso técnico e freelas',
+      'Operação de setor de suprimentos em ambiente de alta criticidade',
+      'Gestão de dados e processos em paralelo com curso técnico e projetos freelance',
     ],
     aprendizado: 'Se eu etiquetar um remédio errado, alguém se machuca. Foi o primeiro lugar onde erro não tem git revert.',
   },
   {
     id: '04', empresa: 'William Weiss', tipo: 'Freelance', periodo: '2026',
-    papel: 'Desenvolvedor Web & Estratégia de Conteúdo',
+    papel: 'Estrategista Digital & Analista de Conversão',
     entregas: [
-      'Landing page que gerou novos clientes para agente Santander PJ',
-      'Estratégia de conteúdo e presença Instagram PJ',
+      'Landing page com rastreamento de conversão via Google Analytics',
+      'Estratégia de conteúdo Instagram com crescimento acima da média da plataforma',
     ],
     aprendizado: 'Quando o marketing funcionou antes do previsto, entendi que código é só o começo.',
   },

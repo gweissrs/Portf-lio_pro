@@ -62,17 +62,13 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
         const contentEl = sectionRef.current?.querySelector(`.${styles.content}`)
         if (contentEl) contentEl.style.opacity = '1'
 
+        show(nameRef.current)
         show(badgeRef.current)
         show(jobTitleRef.current)
         show(locationRef.current)
         show(phraseRef.current)
         show(ctasRef.current)
         show(scrollRef.current)
-
-        if (nameRef.current) {
-          nameRef.current.style.opacity = '1'
-          nameRef.current.textContent = 'Guilherme Weiss'
-        }
 
         onBootComplete?.()
       })
@@ -97,119 +93,67 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
       // FASE 1 — linha holográfica revela completamente
       gsap.to(revealProgress, {
         current: 1,
-        duration: 3.0,
+        duration: 1.8,
         ease: 'power1.inOut',
-        delay: 0.3,
+        delay: 0.2,
         onComplete: () => {
           onBootComplete?.();
           gsap.set(contentEl, { opacity: 1 });
 
+          // ─── Nome: blur dissolve limpo, consistente com a cascata ─────────────
+          gsap.set(nameRef.current, { opacity: 1, filter: 'blur(20px)', scale: 1.015 });
+          gsap.to(nameRef.current, {
+            filter: 'blur(0px)', scale: 1, duration: 0.65, ease: 'power2.out',
+          });
+
+          // ─── Cascata: posições absolutas no timeline, 0.1s de offset entre cada ─
           const tl = gsap.timeline();
 
-          // 1. NOME — Typewriter primeiro
-          tl.add(() => {
-            gsap.set(nameRef.current, { opacity: 1 });
-            nameRef.current.textContent = '';
-
-            const cursor = document.createElement('span');
-            cursor.textContent = '|';
-            cursor.style.cssText = `
-              color: #06B6D4;
-              font-weight: 300;
-              animation: cursorBlink 0.7s step-end infinite;
-              margin-left: 2px;
-            `;
-            nameRef.current.appendChild(cursor);
-
-            if (!document.getElementById('cursor-style')) {
-              const style = document.createElement('style');
-              style.id = 'cursor-style';
-              style.textContent = `
-                @keyframes cursorBlink {
-                  0%, 100% { opacity: 1; }
-                  50% { opacity: 0; }
-                }
-              `;
-              document.head.appendChild(style);
-            }
-
-            const fullName = 'Guilherme Weiss';
-            let charIndex = 0;
-            const typeSpeed = 80;
-
-            const typeNext = () => {
-              if (!nameRef.current) return;
-              if (charIndex < fullName.length) {
-                const char = document.createTextNode(fullName[charIndex]);
-                nameRef.current.insertBefore(char, cursor);
-                charIndex++;
-                setTimeout(typeNext, typeSpeed);
-              } else {
-                setTimeout(() => {
-                  gsap.to(cursor, {
-                    opacity: 0,
-                    duration: 0.3,
-                    onComplete: () => cursor.remove(),
-                  });
-                }, 800);
-              }
-            };
-
-            setTimeout(typeNext, 200);
-          });
-          // Aguardar typewriter: 200ms delay + 15 chars × 80ms + 800ms cursor fade
-          tl.to({}, { duration: 2.2 });
-
-          // 2. JOB TITLE — letter-spacing collapse
           tl.fromTo(jobTitleRef.current,
-            { opacity: 0, letterSpacing: '0.5em' },
-            { opacity: 1, letterSpacing: '0.01em', duration: 1.0, ease: 'power4.out' }
+            { opacity: 0, y: 16, filter: 'blur(14px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.38, ease: 'power2.out' },
+            0.08
           );
 
-          // 3. BADGE — sobe de baixo, simultâneo com jobTitle
           tl.fromTo(badgeRef.current,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
-            '<'
+            { opacity: 0, y: 16, filter: 'blur(14px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.38, ease: 'power2.out' },
+            0.18
           );
 
-          // 4. LOCATION — clip-path da esquerda para direita
           tl.fromTo(locationRef.current,
-            { opacity: 1, clipPath: 'inset(0 100% 0 0)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.8, ease: 'power3.inOut' },
-            '-=0.3'
+            { opacity: 1, clipPath: 'inset(0 100% 0 0)', filter: 'blur(8px)' },
+            { clipPath: 'inset(0 0% 0 0)', filter: 'blur(0px)', duration: 0.38, ease: 'power3.inOut' },
+            0.28
           );
 
-          // 5. PHRASE — scale + blur reveal
           tl.fromTo(phraseRef.current,
-            { opacity: 0, scale: 1.04, y: 8 },
-            { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: 'power2.out' },
-            '-=0.3'
+            { opacity: 0, y: 16, filter: 'blur(14px)' },
+            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.38, ease: 'power2.out' },
+            0.38
           );
 
-          // 6. CTAs — stagger com back.out
-          tl.set(ctasRef.current, { opacity: 1, y: 0 });
+          tl.set(ctasRef.current, { opacity: 1, y: 0 }, 0.48);
           const ctaButtons = ctasRef.current?.children;
           if (ctaButtons?.length) {
             tl.fromTo(ctaButtons,
-              { opacity: 0, y: 24, scale: 0.88 },
-              { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.15, ease: 'back.out(1.7)' },
-              '-=0.3'
+              { opacity: 0, y: 16, filter: 'blur(12px)' },
+              { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.32, stagger: 0.08, ease: 'power2.out' },
+              0.48
             );
           }
 
-          // 7. SCROLL INDICATOR — fade + bounce infinito
           tl.fromTo(scrollRef.current,
-            { opacity: 0, y: -10 },
+            { opacity: 0, filter: 'blur(8px)' },
             {
-              opacity: 0.5, y: 0, duration: 0.8, ease: 'power2.out',
+              opacity: 0.5, filter: 'blur(0px)', duration: 0.32, ease: 'power2.out',
               onComplete: () => {
                 gsap.to(scrollRef.current, {
                   y: 9, repeat: -1, yoyo: true, duration: 1.1, ease: 'sine.inOut',
                 });
               },
             },
-            '-=0.2'
+            0.60
           );
         },
       });
@@ -245,15 +189,15 @@ export function Hero({ onBootComplete, revealProgress, mousePos }) {
           </h1>
 
           <p ref={jobTitleRef} className={styles.jobTitle}>
-            Desenvolvedor Front-end
+            Analytics & Business Intelligence
           </p>
 
           <p ref={locationRef} className={styles.location}>
-            Florianópolis · Curso Técnico SESI SENAI · Open to work
+            Florianópolis · SESI SENAI · Buscando estágio em BI
           </p>
 
           <p ref={phraseRef} className={styles.phrase}>
-            Já tenho projetos em produção. Buscando o primeiro estágio.
+            Entendo o problema antes de construir a solução.
           </p>
 
           <div ref={ctasRef} className={styles.ctas}>

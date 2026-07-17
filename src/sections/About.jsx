@@ -142,7 +142,7 @@ export function About() {
               Sobre
             </span>
             <h2 className={styles.bigStatement}>
-              <span className={styles.statLine} data-big-line>Dev.</span>
+              <span className={styles.statLine} data-big-line>Analista.</span>
               <span className={styles.statLine} data-big-line><span className={styles.accent}>Builder.</span></span>
               <span className={styles.statLine} data-big-line>17 anos.</span>
             </h2>
@@ -151,25 +151,28 @@ export function About() {
           {/* COLUNA 2 — Narrativa */}
           <div className={styles.narrative}>
             <p className={styles.lead}>
-              Comecei a programar em 2026. Em menos de um ano, já tenho produtos em&#8239;produção.
+              Comecei pela tecnologia. Fiquei pelo problema de&#8239;negócio.
             </p>
             <p className={styles.paragraph}>
-              O primeiro projeto real foi o PayReminder, sistema
-              de cobrança que hoje uma equipe administrativa usa
-              todo dia. Fiz também o site do meu pai: no primeiro
-              mês ele fechou mais negócios do que antes.
+              O que me motivou nos projetos da Coana nunca foi o
+              código. Foi entender como a empresa funcionava, onde
+              o processo quebrava e o que precisaria mudar para
+              funcionar melhor. Desenvolvimento foi o caminho.
+              Análise foi o destino.
             </p>
             <p className={styles.paragraph}>
-              Trabalho no Hospital Baía Sul como menor aprendiz.
-              Não é tech, mas foi lá que entendi o que é
-              responsabilidade em ambiente profissional e fazer
-              todo dia o que precisa ser feito.
+              No Hospital Baía Sul aprendi o que significa operar
+              dentro de um processo crítico. Cada entrada de dado,
+              cada pedido de suprimento tem consequência real. Foi
+              o primeiro ambiente onde entendi que dados incorretos
+              custam mais do que dados atrasados.
             </p>
             <p className={styles.paragraph}>
-              Uso IA pra estudar: pesquiso como outros já
-              resolveram o mesmo problema e testo decisões
-              antes de implementar. O que me motiva é construir
-              coisas que funcionam pra quem vai usar.
+              Uso IA como ferramenta de análise: pesquiso como
+              outros já resolveram o mesmo problema, mapeio os
+              trade-offs e testo decisões antes de implementar.
+              O que me motiva não é construir, é resolver.
+              Construir é a consequência.
             </p>
           </div>
 

@@ -1,6 +1,6 @@
 const personal = {
   nome: 'Guilherme Weiss',
-  titulo: 'Desenvolvedor Front-end',
+  titulo: 'Analytics & Business Intelligence',
   localizacao: 'Florianópolis, SC',
   email: 'guilhermewrsilva@gmail.com',
   github: 'https://github.com/gweissrs',

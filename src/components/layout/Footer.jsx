@@ -8,7 +8,7 @@ export function Footer() {
     <footer className={styles.footer} role="contentinfo">
       <div className={styles.inner}>
         <span className={styles.name}>{personal.nome}</span>
-        <span className={styles.copy}>© {year} — Todos os direitos reservados</span>
+        <span className={styles.copy}>© {year} · Todos os direitos reservados</span>
         <div className={styles.links}>
           <a
             href={personal.github}

@@ -242,6 +242,18 @@ export function ProjectCase() {
             <span className={styles.blockLabel}>O problema</span>
             <p className={styles.blockText}>{project.problem}</p>
           </section>
+          {project.contexto && (
+            <section className={styles.block}>
+              <span className={styles.blockLabel}>O contexto</span>
+              <p className={styles.blockText}>{project.contexto}</p>
+            </section>
+          )}
+          {project.solucao && (
+            <section className={styles.block}>
+              <span className={styles.blockLabel}>A solução</span>
+              <p className={styles.blockText}>{project.solucao}</p>
+            </section>
+          )}
           <section className={styles.block}>
             <span className={styles.blockLabel}>O processo</span>
             <p className={styles.blockText}>{project.process}</p>
@@ -250,10 +262,18 @@ export function ProjectCase() {
             <span className={styles.blockLabel}>O resultado</span>
             <p className={styles.blockText}>{project.result}</p>
           </section>
-          <section className={styles.block}>
-            <span className={styles.blockLabel}>Desafios</span>
-            <p className={styles.blockText}>{project.challenges}</p>
-          </section>
+          {project.indicadores && (
+            <section className={styles.block}>
+              <span className={styles.blockLabel}>Indicadores</span>
+              <p className={styles.blockText}>{project.indicadores}</p>
+            </section>
+          )}
+          {project.aprendizados && (
+            <section className={styles.block}>
+              <span className={styles.blockLabel}>Aprendizados</span>
+              <p className={styles.blockText}>{project.aprendizados}</p>
+            </section>
+          )}
         </div>
 
         <div className={styles.nav}>

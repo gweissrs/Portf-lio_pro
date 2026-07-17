@@ -6,56 +6,76 @@ import {
   SiReact, SiJavascript, SiHtml5, SiCss, SiVite,
   SiNodedotjs, SiExpress, SiPostgresql, SiGit,
   SiRailway, SiNetlify, SiVercel, SiMysql, SiPrisma,
+  SiSupabase, SiGoogleanalytics,
 } from 'react-icons/si'
+import {
+  FaDatabase, FaSitemap, FaChartLine, FaClipboardList, FaStream,
+  FaLayerGroup, FaEye, FaTasks,
+} from 'react-icons/fa'
 import styles from './Skills.module.css'
 
 
 const TECH_ICONS = {
-  'React':                      SiReact,
-  'JavaScript':                 SiJavascript,
-  'HTML':                       SiHtml5,
-  'CSS':                        SiCss,
-  'Vite':                       SiVite,
-  'Node.js':                    SiNodedotjs,
-  'Express':                    SiExpress,
-  'PostgreSQL':                 SiPostgresql,
-  'PgAdmin':                    SiPostgresql,
-  'Git':                        SiGit,
-  'Railway':                    SiRailway,
-  'Netlify':                    SiNetlify,
-  'Vercel':                     SiVercel,
-  'MySQL':                      SiMysql,
-  'Prisma':                     SiPrisma,
+  // Análise & BI
+  'SQL':                            FaDatabase,
+  'Modelagem de Dados (UML/ER)':    FaSitemap,
+  'Indicadores & KPIs':             FaChartLine,
+  'Google Analytics':               SiGoogleanalytics,
+  'Levantamento de Requisitos':     FaClipboardList,
+  'Mapeamento de Processos':        FaStream,
+  // Banco de Dados
+  'PostgreSQL':                     SiPostgresql,
+  'PgAdmin':                        SiPostgresql,
+  'MySQL':                          SiMysql,
+  'Supabase':                       SiSupabase,
+  // Desenvolvimento
+  'React':                          SiReact,
+  'JavaScript':                     SiJavascript,
+  'HTML':                           SiHtml5,
+  'CSS':                            SiCss,
+  'Vite':                           SiVite,
+  'Node.js':                        SiNodedotjs,
+  'Express':                        SiExpress,
+  'Prisma':                         SiPrisma,
+  // Processo & Ferramentas
+  'Git':                            SiGit,
+  'Scrum':                          FaLayerGroup,
+  'Boas práticas de UX':            FaEye,
+  'Gestão de projetos':             FaTasks,
+  // Deploy
+  'Railway':                        SiRailway,
+  'Netlify':                        SiNetlify,
+  'Vercel':                         SiVercel,
 }
 
 const CATEGORIES = [
   {
-    id: 'frontend',
-    label: 'Frontend',
-    tech: ['React', 'JavaScript', 'HTML', 'CSS', 'Vite'],
-    context: 'Aplicado em produção no PayReminder e no Poussin Learning.',
+    id: 'bi',
+    label: 'Análise & BI',
+    tech: ['SQL', 'Modelagem de Dados (UML/ER)', 'Indicadores & KPIs', 'Google Analytics', 'Levantamento de Requisitos', 'Mapeamento de Processos'],
+    context: 'Mapeei processos, estruturei bancos relacionais e defini indicadores em projetos reais para a Coana.',
     badge: null,
   },
   {
-    id: 'backend',
-    label: 'Backend & Dados',
-    tech: ['Node.js', 'Express', 'PostgreSQL', 'PgAdmin', 'Prisma', 'Git'],
-    context: 'Construí o SmartNotes do zero: banco de dados, API e autenticação.',
+    id: 'database',
+    label: 'Banco de Dados',
+    tech: ['PostgreSQL', 'MySQL', 'Supabase', 'PgAdmin'],
+    context: 'PostgreSQL em produção: PayReminder e Sistema Feirao SP dependem desses dados todos os dias.',
     badge: null,
   },
   {
-    id: 'deploy',
-    label: 'Deploy & Infra',
-    tech: ['Railway', 'Netlify', 'Vercel'],
-    context: 'Deploy real do SmartNotes em produção (Netlify + Railway).',
+    id: 'dev',
+    label: 'Desenvolvimento',
+    tech: ['JavaScript', 'React', 'Node.js', 'HTML', 'CSS'],
+    context: 'Desenvolvimento como ferramenta para criar soluções. Não o objetivo final.',
     badge: null,
   },
   {
     id: 'process',
-    label: 'Processo & Produto',
-    tech: ['Modelagem de sistema (UML/ER)', 'Levantamento de requisitos', 'Boas práticas de UX', 'Scrum', 'MySQL'],
-    context: 'Base do curso técnico SESI SENAI. Lá a entrega é real, o prazo é real, e não passar é não passar.',
-    badge: 'Formação',
+    label: 'Processo & Ferramentas',
+    tech: ['Git', 'Scrum', 'Boas práticas de UX', 'Gestão de projetos'],
+    context: 'SESI SENAI: prazo real, entrega real, cliente real. Sem simulação de pressão.',
+    badge: null,
   },
 ]
 
@@ -101,7 +121,7 @@ export function Skills() {
           Skills
         </span>
         <h2 className={styles.title} data-reveal="up" data-delay="0.08">
-          Stack em uso
+          Habilidades & Ferramentas
         </h2>
 
         <div className={styles.tabsBlock} data-reveal="up" data-delay="0.16">

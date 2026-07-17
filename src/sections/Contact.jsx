@@ -84,11 +84,11 @@ export function Contact({ mousePos }) {
         {/* Frase de encerramento — topo esquerda */}
         <div className={styles.closing} data-reveal="up">
           <h2 className={styles.closingTitle} data-reveal="up" data-delay="0.08">
-            O próximo projeto<br />
-            <span className={styles.closingAccent}>começa com uma mensagem.</span>
+            A próxima análise<br />
+            <span className={styles.closingAccent}>começa com uma conversa.</span>
           </h2>
           <p className={styles.closingSubtitle} data-reveal="up" data-delay="0.16">
-            Disponível para estágio. Aceito freela também.
+            Disponível para estágio em BI, Analytics ou dados. Aceito projetos também.
           </p>
         </div>
 
