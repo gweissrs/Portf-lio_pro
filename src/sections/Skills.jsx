@@ -9,7 +9,7 @@ import {
   SiSupabase, SiGoogleanalytics,
 } from 'react-icons/si'
 import {
-  FaDatabase, FaSitemap, FaChartLine, FaClipboardList, FaStream,
+  FaDatabase, FaSitemap, FaChartLine, FaChartBar, FaClipboardList, FaStream,
   FaLayerGroup, FaEye, FaTasks,
 } from 'react-icons/fa'
 import styles from './Skills.module.css'
@@ -18,6 +18,7 @@ import styles from './Skills.module.css'
 const TECH_ICONS = {
   // Análise & BI
   'SQL':                            FaDatabase,
+  'Power BI':                       FaChartBar,
   'Modelagem de Dados (UML/ER)':    FaSitemap,
   'Indicadores & KPIs':             FaChartLine,
   'Google Analytics':               SiGoogleanalytics,
@@ -52,7 +53,7 @@ const CATEGORIES = [
   {
     id: 'bi',
     label: 'Análise & BI',
-    tech: ['SQL', 'Modelagem de Dados (UML/ER)', 'Indicadores & KPIs', 'Google Analytics', 'Levantamento de Requisitos', 'Mapeamento de Processos'],
+    tech: ['SQL', 'Power BI', 'Modelagem de Dados (UML/ER)', 'Indicadores & KPIs', 'Google Analytics', 'Levantamento de Requisitos', 'Mapeamento de Processos'],
     context: 'Mapeei processos, estruturei bancos relacionais e defini indicadores em projetos reais para a Coana.',
     badge: null,
   },

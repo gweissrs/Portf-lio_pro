@@ -49,7 +49,7 @@ export const projects = [
     id: 'desafio-bp-bancos',
     featured: true,
     name: 'Desafio BP Bancos',
-    tagline: '1º lugar: Gateway de pagamentos com decisão em tempo real',
+    tagline: 'Dashboard SaaS para apoio à decisão em tempo real — 1º lugar no Desafio BP Bancos',
     description: 'O gerente de desenvolvimento da BP Bancos propôs um desafio no SESI SENAI: construir um gateway de pagamento avaliado por benchmark automatizado com 200 transações concorrentes sob stress. Cada transação precisava passar por regras de negócio específicas para pontuar. Meu time ficou em 1º lugar.',
     stack: ['React', 'Vite', 'Node.js', 'Fastify', 'SQLite', 'Prisma'],
     liveUrl: null,

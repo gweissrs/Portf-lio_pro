@@ -144,7 +144,7 @@ export function About() {
             <h2 className={styles.bigStatement}>
               <span className={styles.statLine} data-big-line>Analista.</span>
               <span className={styles.statLine} data-big-line><span className={styles.accent}>Builder.</span></span>
-              <span className={styles.statLine} data-big-line>17 anos.</span>
+              <span className={styles.statLine} data-big-line>Em formação.</span>
             </h2>
           </div>
 
