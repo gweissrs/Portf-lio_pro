@@ -2,7 +2,7 @@
 
 Construo sistemas que funcionam em produção. Isso é o que já entreguei.
 
-**[guilhermewrs.dev](https://guilhermewrs.dev)** &nbsp;·&nbsp; Florianópolis, SC &nbsp;·&nbsp; Disponível para estágio
+**Disponível para estágio**
 
 `React · Node.js · PostgreSQL · GSAP · Three.js`
 
@@ -99,7 +99,6 @@ Tenho 17 anos. Comecei a programar no início de 2026. Tudo aqui foi construído
 
 ## Contato
 
-Se você está construindo algo onde velocidade de execução e iteração importam, quero conversar.
-Disponível para estágio a partir de **agosto de 2026**.
+Se você está construindo algo onde velocidade de execução e iteração importam, quero conversar, estou diponível para estágio.
 
 **guilhermewrsilva@gmail.com** &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/guilherme-weiss-a996a1350) &nbsp;·&nbsp; [GitHub](https://github.com/gweissrs)
